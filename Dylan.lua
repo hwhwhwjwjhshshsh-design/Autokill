@@ -892,16 +892,17 @@ local function ApplyGradient(element, colors, rotation)
 end
 
 -- ============================================
--- ANIMATE GRADIENT - FAST
+-- ANIMATE GRADIENT - CONTINUOUS LOOP
 -- ============================================
 local function AnimateGradient(element, speed)
-    speed = speed or 0.8
+    speed = speed or 0.5
     local gradient = element:FindFirstChild("UIGradient")
     if not gradient then return end
     local offset = 0
     spawn(function()
         while gradient and gradient.Parent do
-            offset = (offset + speed * 0.02) % 1
+            offset = offset + speed * 0.01
+            if offset > 1 then offset = offset - 1 end
             gradient.Offset = Vector2.new(offset, 0)
             wait()
         end
@@ -1057,7 +1058,7 @@ function library:AddWindow(titleText, options)
 
         bar.BackgroundTransparency = options.title_bar_transparency
         local barGrad = ApplyGradient(bar, options.title_bar, 0)
-        if barGrad then AnimateGradient(bar, 0.8) end
+        if barGrad then AnimateGradient(bar, 0.5) end
 
         if tabSelection then
             tabSelection.Size = UDim2.new(1, -30, 0, 22)
@@ -1067,7 +1068,7 @@ function library:AddWindow(titleText, options)
             tabCorner.Parent = tabSelection
             tabSelection.ImageTransparency = 0.4
             local tabGrad = ApplyGradient(tabSelection, options.title_bar, 45)
-            if tabGrad then AnimateGradient(tabSelection, 0.8) end
+            if tabGrad then AnimateGradient(tabSelection, 0.5) end
             local tabButtonsFrame = tabSelection:FindFirstChild("TabButtons")
             if tabButtonsFrame then
                 local tabListLayout = tabButtonsFrame:FindFirstChild("UIListLayout")
@@ -1081,7 +1082,7 @@ function library:AddWindow(titleText, options)
 
         window.ImageTransparency = options.background_transparency
         local bgGrad = ApplyGradient(window, options.background, 45)
-        if bgGrad then AnimateGradient(window, 0.8) end
+        if bgGrad then AnimateGradient(window, 0.5) end
 
         local tabsContainer = window:FindFirstChild("Tabs")
         toggleButton.MouseButton1Click:Connect(function()
@@ -2044,7 +2045,7 @@ function library:AddWindow(titleText, options)
     end
 
     -- ============================================
-    -- PROFILE PICTURE - TOP LAYER (ZIndex 999)
+    -- PROFILE PICTURE - UIStroke + TOP LAYER
     -- ============================================
     local userId = game:GetService("Players").LocalPlayer.UserId
     local avatarUrl = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. userId .. "&width=150&height=150&format=png"
@@ -2056,9 +2057,15 @@ function library:AddWindow(titleText, options)
     avatarFrame.Position = UDim2.new(1, -65, 1, -65)
     avatarFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
     avatarFrame.BackgroundTransparency = 0.3
-    avatarFrame.BorderSizePixel = 2
-    avatarFrame.BorderColor3 = options.main_color
     avatarFrame.ZIndex = 999
+
+    -- UIStroke instead of Border
+    local avatarStroke = Instance.new("UIStroke")
+    avatarStroke.Parent = avatarFrame
+    avatarStroke.Color = options.main_color
+    avatarStroke.Thickness = 2
+    avatarStroke.Transparency = 0.3
+    avatarStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
     local avatarCorner = Instance.new("UICorner")
     avatarCorner.CornerRadius = UDim.new(1, 0)
@@ -2070,12 +2077,12 @@ function library:AddWindow(titleText, options)
     local shadow = Instance.new("ImageLabel")
     shadow.Name = "Shadow"
     shadow.Parent = avatarFrame
-    shadow.Size = UDim2.new(1.2, 0, 1.2, 0)
-    shadow.Position = UDim2.new(-0.1, 0, -0.1, 0)
+    shadow.Size = UDim2.new(1.3, 0, 1.3, 0)
+    shadow.Position = UDim2.new(-0.15, 0, -0.15, 0)
     shadow.BackgroundTransparency = 1
     shadow.Image = "rbxassetid://2851929490"
     shadow.ImageColor3 = options.main_color
-    shadow.ImageTransparency = 0.6
+    shadow.ImageTransparency = 0.7
     shadow.ZIndex = 998
     shadow.ScaleType = Enum.ScaleType.Slice
     shadow.SliceCenter = Rect.new(4, 4, 4, 4)
