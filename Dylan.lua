@@ -899,24 +899,6 @@ local function ApplyGradient(element, colors, rotation)
     end
     return gradient
 end
-
-
--- ============================================
--- ANIMATE GRADIENT - INFINITE FLOW (seamless water effect)
--- ============================================
-local function AnimateGradient(element, speed)
-    speed = speed or 0.8
-    local gradient = element:FindFirstChild("UIGradient")
-    if not gradient then return end
-    local offset = 0
-    spawn(function()
-        while gradient and gradient.Parent do
-            offset = (offset + speed * 0.025) % 1
-            gradient.Offset = Vector2.new(offset, 0)
-            task.wait()
-        end
-    end)
-end
 -- ============================================
 -- RGB TO HSV
 -- ============================================
@@ -1066,7 +1048,6 @@ function library:AddWindow(titleText, options)
 
         bar.BackgroundTransparency = options.title_bar_transparency
         local barGrad = ApplyGradient(bar, options.title_bar, 0)
-        if barGrad then AnimateGradient(bar, 3.0) end
 
         if tabSelection then
             tabSelection.Size = UDim2.new(1, -30, 0, 22)
@@ -1076,7 +1057,6 @@ function library:AddWindow(titleText, options)
             tabCorner.Parent = tabSelection
             tabSelection.ImageTransparency = 0.4
             local tabGrad = ApplyGradient(tabSelection, options.title_bar, 45)
-            if tabGrad then AnimateGradient(tabSelection, 3.0) end
             local tabButtonsFrame = tabSelection:FindFirstChild("TabButtons")
             if tabButtonsFrame then
                 local tabListLayout = tabButtonsFrame:FindFirstChild("UIListLayout")
@@ -1090,8 +1070,6 @@ function library:AddWindow(titleText, options)
 
         window.ImageTransparency = options.background_transparency
         local bgGrad = ApplyGradient(window, options.background, 45)
-        if bgGrad then AnimateGradient(window, 3.0) end
-
         local tabsContainer = window:FindFirstChild("Tabs")
         toggleButton.MouseButton1Click:Connect(function()
             local isVisible = tabsContainer.Visible
