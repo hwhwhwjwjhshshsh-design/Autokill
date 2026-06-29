@@ -900,23 +900,31 @@ local function ApplyGradient(element, colors, rotation)
     return gradient
 end
 
+
 -- ============================================
--- ANIMATE GRADIENT - INFINITE FLOW (seamless water effect)
+-- ANIMATE GRADIENT - SMOOTH BACK & FORTH (seamless wave)
 -- ============================================
 local function AnimateGradient(element, speed)
-    speed = speed or 0.8
+    speed = speed or 0.5
     local gradient = element:FindFirstChild("UIGradient")
     if not gradient then return end
     local offset = 0
+    local direction = 1
     spawn(function()
         while gradient and gradient.Parent do
-            offset = (offset + speed * 0.025) % 1
+            offset = offset + (speed * 0.025 * direction)
+            if offset >= 1 then
+                offset = 1
+                direction = -1
+            elseif offset <= 0 then
+                offset = 0
+                direction = 1
+            end
             gradient.Offset = Vector2.new(offset, 0)
             task.wait()
         end
     end)
 end
-
 -- ============================================
 -- RGB TO HSV
 -- ============================================
