@@ -1000,53 +1000,86 @@ function library:AddWindow(title, options)
     local window_data = {}
     Window.Draggable = true
 
-    -- ============================================
-    -- 🖐️ GESTURE: RESIZE
-    -- ============================================
-    do
-        local Entered = false
-        Resizer.MouseEnter:Connect(function()
-            Window.Draggable = false
-            Entered = true
-        end)
-        Resizer.MouseLeave:Connect(function()
-            Entered = false
-            Window.Draggable = true
-        end)
 
-        local Held = false
-        UIS.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                Held = true
-                spawn(function()
-                    if Entered and Resizer.Active and options.can_resize then
-                        while Held and Resizer.Active do
-                            local mouse_pos = gMouse()
-                            local x = mouse_pos.X - Window.AbsolutePosition.X
-                            local y = mouse_pos.Y - Window.AbsolutePosition.Y
-                            
-                            if x >= options.min_size.X and y >= options.min_size.Y then
-                                Resize(Window, {Size = UDim2.new(0, x, 0, y)}, options.tween_time)
-                            elseif x >= options.min_size.X then
-                                Resize(Window, {Size = UDim2.new(0, x, 0, options.min_size.Y)}, options.tween_time)
-                            elseif y >= options.min_size.Y then
-                                Resize(Window, {Size = UDim2.new(0, options.min_size.X, 0, y)}, options.tween_time)
-                            else
-                                Resize(Window, {Size = UDim2.new(0, options.min_size.X, 0, options.min_size.Y)}, options.tween_time)
-                            end
-                            task.wait()
-                        end
-                    end
-                end)
+    -- ============================================
+-- 📐 RESIZER (FIXED - Single Input Handler)
+-- ============================================
+do
+    local resizingData = {}
+    
+    -- Single global input handler for ALL resizers
+    local function setupResizer(resizer, window, options)
+        local data = {
+            isResizing = false,
+            window = window,
+            resizer = resizer,
+            options = options,
+        }
+        table.insert(resizingData, data)
+        
+        resizer.MouseEnter:Connect(function()
+            if options.can_resize then
+                window.Draggable = false
             end
         end)
-        UIS.InputEnded:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                Held = false
+        
+        resizer.MouseLeave:Connect(function()
+            if options.can_resize then
+                window.Draggable = true
             end
         end)
     end
-
+    
+    -- Setup this window's resizer
+    setupResizer(Resizer, Window, options)
+    
+    -- SINGLE global input handler
+    UIS.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            -- Find which resizer is being used
+            for _, data in pairs(resizingData) do
+                local mousePos = gMouse()
+                local resizer = data.resizer
+                local window = data.window
+                local opts = data.options
+                
+                -- Check if mouse is over this resizer
+                if resizer and resizer.Active and opts.can_resize then
+                    local absPos = resizer.AbsolutePosition
+                    local absSize = resizer.AbsoluteSize
+                    
+                    if mousePos.X >= absPos.X and mousePos.X <= absPos.X + absSize.X and
+                       mousePos.Y >= absPos.Y and mousePos.Y <= absPos.Y + absSize.Y then
+                        
+                        data.isResizing = true
+                        window.Draggable = false
+                        
+                        spawn(function()
+                            while data.isResizing and resizer.Active do
+                                local newMouse = gMouse()
+                                local x = math.max(newMouse.X - window.AbsolutePosition.X, opts.min_size.X)
+                                local y = math.max(newMouse.Y - window.AbsolutePosition.Y, opts.min_size.Y)
+                                window.Size = UDim2.new(0, x, 0, y)
+                                task.wait()
+                            end
+                            window.Draggable = true
+                        end)
+                        
+                        break
+                    end
+                end
+            end
+        end
+    end)
+    
+    UIS.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            for _, data in pairs(resizingData) do
+                data.isResizing = false
+            end
+        end
+    end)
+    end
     -- ============================================
     -- 🪟 MINIMIZE
     -- ============================================
