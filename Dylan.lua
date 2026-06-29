@@ -892,16 +892,16 @@ local function ApplyGradient(element, colors, rotation)
 end
 
 -- ============================================
--- ANIMATE GRADIENT - MAX SPEED (FAST AF)
+-- ANIMATE GRADIENT - NORMAL FAST SPEED
 -- ============================================
 local function AnimateGradient(element, speed)
-    speed = speed or 3.0
+    speed = speed or 1.5
     local gradient = element:FindFirstChild("UIGradient")
     if not gradient then return end
     local offset = 0
     spawn(function()
         while gradient and gradient.Parent do
-            offset = offset + speed * 0.08
+            offset = offset + speed * 0.03
             if offset > 1 then offset = offset - 1 end
             gradient.Offset = Vector2.new(offset, 0)
             task.wait()
