@@ -1,8 +1,13 @@
 local ui_options = {
-	main_color = Color3.fromRGB(255, 0, 200),
+	main_color = Color3.fromRGB(30, 144, 255),
 	min_size = Vector2.new(500, 500),
 	toggle_key = Enum.KeyCode.RightShift,
 	can_resize = true,
+	theme = "dark",
+	shape = "rounded",
+	corner_radius = 8,
+	spacing = "medium",
+	rainbow_speed = 0.02,
 }
 
 do
@@ -99,7 +104,7 @@ Label.BackgroundTransparency = 1
 Label.Size = UDim2.new(0, 200, 0, 20)
 Label.Font = Enum.Font.GothamSemibold
 Label.Text = "Hello, world 123"
-Label.TextColor3 = Color3.fromRGB(0, 255, 255)
+Label.TextColor3 = Color3.new(1, 1, 1)
 Label.TextSize = 14
 Label.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -113,23 +118,9 @@ Window.Position = UDim2.new(0, 20, 0, 20)
 Window.Selectable = true
 Window.Size = UDim2.new(0, 200, 0, 200)
 Window.Image = "rbxassetid://2851926732"
-Window.ImageColor3 = Color3.fromRGB(8, 0, 20)
+Window.ImageColor3 = Color3.fromRGB(20, 20, 25)
 Window.ScaleType = Enum.ScaleType.Slice
 Window.SliceCenter = Rect.new(12, 12, 12, 12)
-
--- CYBERPUNK GLOW
-local glow = Instance.new("ImageLabel")
-glow.Name = "Glow"
-glow.Parent = Window
-glow.Size = UDim2.new(1.1, 0, 1.1, 0)
-glow.Position = UDim2.new(-0.05, 0, -0.05, 0)
-glow.BackgroundTransparency = 1
-glow.Image = "rbxassetid://2851929490"
-glow.ImageColor3 = Color3.fromRGB(255, 0, 200)
-glow.ImageTransparency = 0.75
-glow.ZIndex = 0
-glow.ScaleType = Enum.ScaleType.Slice
-glow.SliceCenter = Rect.new(4, 4, 4, 4)
 
 Resizer.Name = "Resizer"
 Resizer.Parent = Window
@@ -142,8 +133,8 @@ Resizer.Size = UDim2.new(0, 20, 0, 20)
 
 Bar.Name = "Bar"
 Bar.Parent = Window
-Bar.BackgroundColor3 = Color3.fromRGB(255, 0, 200)
-Bar.BackgroundTransparency = 0.9
+Bar.BackgroundColor3 = Color3.fromRGB(30, 144, 255)
+Bar.BackgroundTransparency = 0
 Bar.BorderSizePixel = 0
 Bar.Position = UDim2.new(0, 0, 0, 5)
 Bar.Size = UDim2.new(1, 0, 0, 15)
@@ -165,13 +156,13 @@ Toggle.Image = "https://www.roblox.com/Thumbs/Asset.ashx?width=420&height=420&as
 
 Base.Name = "Base"
 Base.Parent = Bar
-Base.BackgroundColor3 = Color3.fromRGB(255, 0, 200)
-Base.BackgroundTransparency = 0.3
+Base.BackgroundColor3 = Color3.fromRGB(30, 144, 255)
+Base.BackgroundTransparency = 0
 Base.BorderSizePixel = 0
 Base.Position = UDim2.new(0, 0, 0.800000012, 0)
 Base.Size = UDim2.new(1, 0, 0, 10)
 Base.Image = "rbxassetid://2851926732"
-Base.ImageColor3 = Color3.fromRGB(255, 0, 200)
+Base.ImageColor3 = Color3.fromRGB(30, 144, 255)
 Base.ScaleType = Enum.ScaleType.Slice
 Base.SliceCenter = Rect.new(12, 12, 12, 12)
 
@@ -182,7 +173,7 @@ Top.BackgroundTransparency = 1
 Top.Position = UDim2.new(0, 0, 0, -5)
 Top.Size = UDim2.new(1, 0, 0, 10)
 Top.Image = "rbxassetid://2851926732"
-Top.ImageColor3 = Color3.fromRGB(255, 0, 200)
+Top.ImageColor3 = Color3.fromRGB(30, 144, 255)
 Top.ScaleType = Enum.ScaleType.Slice
 Top.SliceCenter = Rect.new(12, 12, 12, 12)
 
@@ -201,7 +192,7 @@ Title.Position = UDim2.new(0, 30, 0, 3)
 Title.Size = UDim2.new(0, 200, 0, 20)
 Title.Font = Enum.Font.GothamBold
 Title.Text = "Gamer Time"
-Title.TextColor3 = Color3.fromRGB(0, 255, 255)
+Title.TextColor3 = Color3.new(1, 1, 1)
 Title.TextSize = 14
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -213,7 +204,7 @@ TabSelection.Position = UDim2.new(0, 15, 0, 30)
 TabSelection.Size = UDim2.new(1, -30, 0, 25)
 TabSelection.Visible = false
 TabSelection.Image = "rbxassetid://2851929490"
-TabSelection.ImageColor3 = Color3.fromRGB(8, 0, 20)
+TabSelection.ImageColor3 = Color3.fromRGB(20, 20, 25)
 TabSelection.ScaleType = Enum.ScaleType.Slice
 TabSelection.SliceCenter = Rect.new(4, 4, 4, 4)
 
@@ -229,7 +220,7 @@ UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 UIListLayout.Padding = UDim.new(0, 2)
 
 Frame.Parent = TabSelection
-Frame.BackgroundColor3 = Color3.fromRGB(255, 0, 200)
+Frame.BackgroundColor3 = Color3.fromRGB(30, 144, 255)
 Frame.BorderColor3 = Color3.new(0.105882, 0.164706, 0.207843)
 Frame.BorderSizePixel = 0
 Frame.Position = UDim2.new(0, 0, 1, 0)
@@ -253,10 +244,10 @@ TextBox.BorderSizePixel = 0
 TextBox.Size = UDim2.new(1, 0, 0, 20)
 TextBox.ZIndex = 2
 TextBox.Font = Enum.Font.GothamSemibold
-TextBox.PlaceholderColor3 = Color3.fromRGB(100, 0, 150)
+TextBox.PlaceholderColor3 = Color3.new(0.698039, 0.698039, 0.698039)
 TextBox.PlaceholderText = "Input Text"
 TextBox.Text = ""
-TextBox.TextColor3 = Color3.fromRGB(0, 255, 255)
+TextBox.TextColor3 = Color3.new(1, 1, 1)
 TextBox.TextSize = 14
 
 TextBox_Roundify_4px.Name = "TextBox_Roundify_4px"
@@ -265,7 +256,7 @@ TextBox_Roundify_4px.BackgroundColor3 = Color3.new(1, 1, 1)
 TextBox_Roundify_4px.BackgroundTransparency = 1
 TextBox_Roundify_4px.Size = UDim2.new(1, 0, 1, 0)
 TextBox_Roundify_4px.Image = "rbxassetid://2851929490"
-TextBox_Roundify_4px.ImageColor3 = Color3.fromRGB(8, 0, 20)
+TextBox_Roundify_4px.ImageColor3 = Color3.fromRGB(20, 20, 25)
 TextBox_Roundify_4px.ScaleType = Enum.ScaleType.Slice
 TextBox_Roundify_4px.SliceCenter = Rect.new(4, 4, 4, 4)
 
@@ -276,7 +267,7 @@ Slider.BackgroundTransparency = 1
 Slider.Position = UDim2.new(0, 0, 0.178571433, 0)
 Slider.Size = UDim2.new(1, 0, 0, 20)
 Slider.Image = "rbxassetid://2851929490"
-Slider.ImageColor3 = Color3.fromRGB(8, 0, 20)
+Slider.ImageColor3 = Color3.fromRGB(20, 20, 25)
 Slider.ScaleType = Enum.ScaleType.Slice
 Slider.SliceCenter = Rect.new(4, 4, 4, 4)
 
@@ -289,7 +280,7 @@ Title_2.Size = UDim2.new(0, 0, 0, 20)
 Title_2.ZIndex = 2
 Title_2.Font = Enum.Font.GothamBold
 Title_2.Text = "Slider"
-Title_2.TextColor3 = Color3.fromRGB(0, 255, 255)
+Title_2.TextColor3 = Color3.new(1, 1, 1)
 Title_2.TextSize = 14
 
 Indicator.Name = "Indicator"
@@ -298,7 +289,7 @@ Indicator.BackgroundColor3 = Color3.new(1, 1, 1)
 Indicator.BackgroundTransparency = 1
 Indicator.Size = UDim2.new(0, 0, 0, 20)
 Indicator.Image = "rbxassetid://2851929490"
-Indicator.ImageColor3 = Color3.fromRGB(255, 0, 200)
+Indicator.ImageColor3 = Color3.fromRGB(30, 144, 255)
 Indicator.ScaleType = Enum.ScaleType.Slice
 Indicator.SliceCenter = Rect.new(4, 4, 4, 4)
 
@@ -310,7 +301,7 @@ Value.Position = UDim2.new(1, -55, 0.5, -10)
 Value.Size = UDim2.new(0, 50, 0, 20)
 Value.Font = Enum.Font.GothamBold
 Value.Text = "0%"
-Value.TextColor3 = Color3.fromRGB(0, 255, 255)
+Value.TextColor3 = Color3.new(1, 1, 1)
 Value.TextSize = 14
 
 TextLabel.Parent = Slider
@@ -320,7 +311,7 @@ TextLabel.Position = UDim2.new(1, -20, -0.75, 0)
 TextLabel.Size = UDim2.new(0, 26, 0, 50)
 TextLabel.Font = Enum.Font.GothamBold
 TextLabel.Text = "]"
-TextLabel.TextColor3 = Color3.fromRGB(255, 0, 200)
+TextLabel.TextColor3 = Color3.new(0.627451, 0.627451, 0.627451)
 TextLabel.TextSize = 14
 
 TextLabel_2.Parent = Slider
@@ -330,7 +321,7 @@ TextLabel_2.Position = UDim2.new(1, -65, -0.75, 0)
 TextLabel_2.Size = UDim2.new(0, 26, 0, 50)
 TextLabel_2.Font = Enum.Font.GothamBold
 TextLabel_2.Text = "["
-TextLabel_2.TextColor3 = Color3.fromRGB(255, 0, 200)
+TextLabel_2.TextColor3 = Color3.new(0.627451, 0.627451, 0.627451)
 TextLabel_2.TextSize = 14
 
 Circle.Name = "Circle"
@@ -339,7 +330,6 @@ Circle.BackgroundColor3 = Color3.new(1, 1, 1)
 Circle.BackgroundTransparency = 1
 Circle.Image = "rbxassetid://266543268"
 Circle.ImageTransparency = 0.5
-Circle.ImageColor3 = Color3.fromRGB(255, 0, 200)
 
 UIListLayout_3.Parent = Prefabs
 UIListLayout_3.FillDirection = Enum.FillDirection.Horizontal
@@ -356,7 +346,7 @@ Dropdown.Size = UDim2.new(0, 200, 0, 20)
 Dropdown.ZIndex = 2
 Dropdown.Font = Enum.Font.GothamBold
 Dropdown.Text = "      Dropdown"
-Dropdown.TextColor3 = Color3.fromRGB(0, 255, 255)
+Dropdown.TextColor3 = Color3.new(1, 1, 1)
 Dropdown.TextSize = 14
 Dropdown.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -378,7 +368,7 @@ Box.Position = UDim2.new(0, 0, 0, 25)
 Box.Size = UDim2.new(1, 0, 0, 150)
 Box.ZIndex = 3
 Box.Image = "rbxassetid://2851929490"
-Box.ImageColor3 = Color3.fromRGB(8, 0, 20)
+Box.ImageColor3 = Color3.fromRGB(20, 20, 25)
 Box.ScaleType = Enum.ScaleType.Slice
 Box.SliceCenter = Rect.new(4, 4, 4, 4)
 
@@ -401,21 +391,21 @@ TextButton_Roundify_4px.BackgroundColor3 = Color3.new(1, 1, 1)
 TextButton_Roundify_4px.BackgroundTransparency = 1
 TextButton_Roundify_4px.Size = UDim2.new(1, 0, 1, 0)
 TextButton_Roundify_4px.Image = "rbxassetid://2851929490"
-TextButton_Roundify_4px.ImageColor3 = Color3.fromRGB(8, 0, 20)
+TextButton_Roundify_4px.ImageColor3 = Color3.fromRGB(20, 20, 25)
 TextButton_Roundify_4px.ScaleType = Enum.ScaleType.Slice
 TextButton_Roundify_4px.SliceCenter = Rect.new(4, 4, 4, 4)
 
 TabButton.Name = "TabButton"
 TabButton.Parent = Prefabs
-TabButton.BackgroundColor3 = Color3.fromRGB(255, 0, 200)
-TabButton.BackgroundTransparency = 0.5
+TabButton.BackgroundColor3 = Color3.fromRGB(30, 144, 255)
+TabButton.BackgroundTransparency = 0
 TabButton.BorderSizePixel = 0
 TabButton.Position = UDim2.new(0.185185179, 0, 0, 0)
 TabButton.Size = UDim2.new(0, 71, 0, 20)
 TabButton.ZIndex = 2
 TabButton.Font = Enum.Font.GothamSemibold
 TabButton.Text = "Test tab"
-TabButton.TextColor3 = Color3.fromRGB(0, 255, 255)
+TabButton.TextColor3 = Color3.new(1, 1, 1)
 TabButton.TextSize = 14
 
 TextButton_Roundify_4px_2.Name = "TextButton_Roundify_4px"
@@ -424,7 +414,7 @@ TextButton_Roundify_4px_2.BackgroundColor3 = Color3.new(1, 1, 1)
 TextButton_Roundify_4px_2.BackgroundTransparency = 1
 TextButton_Roundify_4px_2.Size = UDim2.new(1, 0, 1, 0)
 TextButton_Roundify_4px_2.Image = "rbxassetid://2851929490"
-TextButton_Roundify_4px_2.ImageColor3 = Color3.fromRGB(8, 0, 20)
+TextButton_Roundify_4px_2.ImageColor3 = Color3.fromRGB(30, 144, 255)
 TextButton_Roundify_4px_2.ScaleType = Enum.ScaleType.Slice
 TextButton_Roundify_4px_2.SliceCenter = Rect.new(4, 4, 4, 4)
 
@@ -435,20 +425,20 @@ Folder.BackgroundTransparency = 1
 Folder.Position = UDim2.new(0, 0, 0, 50)
 Folder.Size = UDim2.new(1, 0, 0, 20)
 Folder.Image = "rbxassetid://2851929490"
-Folder.ImageColor3 = Color3.fromRGB(8, 0, 20)
+Folder.ImageColor3 = Color3.fromRGB(20, 20, 25)
 Folder.ScaleType = Enum.ScaleType.Slice
 Folder.SliceCenter = Rect.new(4, 4, 4, 4)
 
 Button.Name = "Button"
 Button.Parent = Folder
-Button.BackgroundColor3 = Color3.fromRGB(255, 0, 200)
-Button.BackgroundTransparency = 0.3
+Button.BackgroundColor3 = Color3.fromRGB(30, 144, 255)
+Button.BackgroundTransparency = 0
 Button.BorderSizePixel = 0
 Button.Size = UDim2.new(1, 0, 0, 20)
 Button.ZIndex = 2
 Button.Font = Enum.Font.GothamSemibold
 Button.Text = "      Folder"
-Button.TextColor3 = Color3.fromRGB(0, 255, 255)
+Button.TextColor3 = Color3.new(1, 1, 1)
 Button.TextSize = 14
 Button.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -458,7 +448,7 @@ TextButton_Roundify_4px_3.BackgroundColor3 = Color3.new(1, 1, 1)
 TextButton_Roundify_4px_3.BackgroundTransparency = 1
 TextButton_Roundify_4px_3.Size = UDim2.new(1, 0, 1, 0)
 TextButton_Roundify_4px_3.Image = "rbxassetid://2851929490"
-TextButton_Roundify_4px_3.ImageColor3 = Color3.fromRGB(255, 0, 200)
+TextButton_Roundify_4px_3.ImageColor3 = Color3.fromRGB(30, 144, 255)
 TextButton_Roundify_4px_3.ScaleType = Enum.ScaleType.Slice
 TextButton_Roundify_4px_3.SliceCenter = Rect.new(4, 4, 4, 4)
 
@@ -499,7 +489,7 @@ Console.BackgroundColor3 = Color3.new(1, 1, 1)
 Console.BackgroundTransparency = 1
 Console.Size = UDim2.new(1, 0, 0, 200)
 Console.Image = "rbxassetid://2851928141"
-Console.ImageColor3 = Color3.fromRGB(8, 0, 20)
+Console.ImageColor3 = Color3.fromRGB(20, 20, 25)
 Console.ScaleType = Enum.ScaleType.Slice
 Console.SliceCenter = Rect.new(8, 8, 8, 8)
 
@@ -654,7 +644,7 @@ ColorPicker.BackgroundColor3 = Color3.new(1, 1, 1)
 ColorPicker.BackgroundTransparency = 1
 ColorPicker.Size = UDim2.new(0, 180, 0, 110)
 ColorPicker.Image = "rbxassetid://2851929490"
-ColorPicker.ImageColor3 = Color3.fromRGB(8, 0, 20)
+ColorPicker.ImageColor3 = Color3.fromRGB(20, 20, 25)
 ColorPicker.ScaleType = Enum.ScaleType.Slice
 ColorPicker.SliceCenter = Rect.new(4, 4, 4, 4)
 
@@ -675,7 +665,7 @@ Indicator_3.BackgroundTransparency = 1
 Indicator_3.Size = UDim2.new(0, 5, 0, 5)
 Indicator_3.ZIndex = 2
 Indicator_3.Image = "rbxassetid://2851926732"
-Indicator_3.ImageColor3 = Color3.new(255, 0, 200)
+Indicator_3.ImageColor3 = Color3.fromRGB(30, 144, 255)
 Indicator_3.ScaleType = Enum.ScaleType.Slice
 Indicator_3.SliceCenter = Rect.new(12, 12, 12, 12)
 
@@ -698,7 +688,7 @@ Saturation.Image = "rbxassetid://3641079629"
 
 Indicator_4.Name = "Indicator"
 Indicator_4.Parent = Saturation
-Indicator_4.BackgroundColor3 = Color3.new(255, 0, 200)
+Indicator_4.BackgroundColor3 = Color3.new(30, 144, 255)
 Indicator_4.BorderSizePixel = 0
 Indicator_4.Size = UDim2.new(0, 20, 0, 2)
 Indicator_4.ZIndex = 2
@@ -713,7 +703,7 @@ Switch.Size = UDim2.new(0, 20, 0, 20)
 Switch.ZIndex = 2
 Switch.Font = Enum.Font.SourceSans
 Switch.Text = ""
-Switch.TextColor3 = Color3.fromRGB(0, 255, 255)
+Switch.TextColor3 = Color3.new(1, 1, 1)
 Switch.TextSize = 18
 
 TextButton_Roundify_4px_4.Name = "TextButton_Roundify_4px"
@@ -722,7 +712,7 @@ TextButton_Roundify_4px_4.BackgroundColor3 = Color3.new(1, 1, 1)
 TextButton_Roundify_4px_4.BackgroundTransparency = 1
 TextButton_Roundify_4px_4.Size = UDim2.new(1, 0, 1, 0)
 TextButton_Roundify_4px_4.Image = "rbxassetid://2851929490"
-TextButton_Roundify_4px_4.ImageColor3 = Color3.fromRGB(255, 0, 200)
+TextButton_Roundify_4px_4.ImageColor3 = Color3.fromRGB(30, 144, 255)
 TextButton_Roundify_4px_4.ImageTransparency = 0.5
 TextButton_Roundify_4px_4.ScaleType = Enum.ScaleType.Slice
 TextButton_Roundify_4px_4.SliceCenter = Rect.new(4, 4, 4, 4)
@@ -735,19 +725,19 @@ Title_3.Position = UDim2.new(1.20000005, 0, 0, 0)
 Title_3.Size = UDim2.new(0, 20, 0, 20)
 Title_3.Font = Enum.Font.GothamSemibold
 Title_3.Text = "Switch"
-Title_3.TextColor3 = Color3.fromRGB(0, 255, 255)
+Title_3.TextColor3 = Color3.new(1, 1, 1)
 Title_3.TextSize = 14
 Title_3.TextXAlignment = Enum.TextXAlignment.Left
 
 Button_2.Name = "Button"
 Button_2.Parent = Prefabs
-Button_2.BackgroundColor3 = Color3.fromRGB(255, 0, 200)
-Button_2.BackgroundTransparency = 0.3
+Button_2.BackgroundColor3 = Color3.fromRGB(30, 144, 255)
+Button_2.BackgroundTransparency = 0
 Button_2.BorderSizePixel = 0
 Button_2.Size = UDim2.new(0, 91, 0, 20)
 Button_2.ZIndex = 2
 Button_2.Font = Enum.Font.GothamSemibold
-Button_2.TextColor3 = Color3.fromRGB(0, 255, 255)
+Button_2.TextColor3 = Color3.new(1, 1, 1)
 Button_2.TextSize = 14
 
 TextButton_Roundify_4px_5.Name = "TextButton_Roundify_4px"
@@ -756,19 +746,19 @@ TextButton_Roundify_4px_5.BackgroundColor3 = Color3.new(1, 1, 1)
 TextButton_Roundify_4px_5.BackgroundTransparency = 1
 TextButton_Roundify_4px_5.Size = UDim2.new(1, 0, 1, 0)
 TextButton_Roundify_4px_5.Image = "rbxassetid://2851929490"
-TextButton_Roundify_4px_5.ImageColor3 = Color3.fromRGB(255, 0, 200)
+TextButton_Roundify_4px_5.ImageColor3 = Color3.fromRGB(30, 144, 255)
 TextButton_Roundify_4px_5.ScaleType = Enum.ScaleType.Slice
 TextButton_Roundify_4px_5.SliceCenter = Rect.new(4, 4, 4, 4)
 
 DropdownButton.Name = "DropdownButton"
 DropdownButton.Parent = Prefabs
-DropdownButton.BackgroundColor3 = Color3.fromRGB(8, 0, 20)
+DropdownButton.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 DropdownButton.BorderSizePixel = 0
 DropdownButton.Size = UDim2.new(1, 0, 0, 20)
 DropdownButton.ZIndex = 3
 DropdownButton.Font = Enum.Font.GothamBold
 DropdownButton.Text = "      Button"
-DropdownButton.TextColor3 = Color3.fromRGB(0, 255, 255)
+DropdownButton.TextColor3 = Color3.new(1, 1, 1)
 DropdownButton.TextSize = 14
 DropdownButton.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -778,7 +768,7 @@ Keybind.BackgroundColor3 = Color3.new(1, 1, 1)
 Keybind.BackgroundTransparency = 1
 Keybind.Size = UDim2.new(0, 200, 0, 20)
 Keybind.Image = "rbxassetid://2851929490"
-Keybind.ImageColor3 = Color3.fromRGB(8, 0, 20)
+Keybind.ImageColor3 = Color3.fromRGB(20, 20, 25)
 Keybind.ScaleType = Enum.ScaleType.Slice
 Keybind.SliceCenter = Rect.new(4, 4, 4, 4)
 
@@ -789,7 +779,7 @@ Title_4.BackgroundTransparency = 1
 Title_4.Size = UDim2.new(0, 0, 1, 0)
 Title_4.Font = Enum.Font.GothamBold
 Title_4.Text = "Keybind"
-Title_4.TextColor3 = Color3.fromRGB(0, 255, 255)
+Title_4.TextColor3 = Color3.new(1, 1, 1)
 Title_4.TextSize = 14
 Title_4.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -803,7 +793,7 @@ Input.Size = UDim2.new(0, 80, 1, -4)
 Input.ZIndex = 2
 Input.Font = Enum.Font.GothamSemibold
 Input.Text = "RShift"
-Input.TextColor3 = Color3.fromRGB(0, 255, 255)
+Input.TextColor3 = Color3.new(1, 1, 1)
 Input.TextSize = 12
 Input.TextWrapped = true
 
@@ -813,7 +803,7 @@ Input_Roundify_4px.BackgroundColor3 = Color3.new(1, 1, 1)
 Input_Roundify_4px.BackgroundTransparency = 1
 Input_Roundify_4px.Size = UDim2.new(1, 0, 1, 0)
 Input_Roundify_4px.Image = "rbxassetid://2851929490"
-Input_Roundify_4px.ImageColor3 = Color3.fromRGB(8, 0, 20)
+Input_Roundify_4px.ImageColor3 = Color3.fromRGB(20, 20, 25)
 Input_Roundify_4px.ScaleType = Enum.ScaleType.Slice
 Input_Roundify_4px.SliceCenter = Rect.new(4, 4, 4, 4)
 
@@ -824,7 +814,7 @@ Windows.BackgroundTransparency = 1
 Windows.Position = UDim2.new(0, 20, 0, 20)
 Windows.Size = UDim2.new(1, 20, 1, -20)
 
---[[ Script ]]--
+--[[ SCRIPT ]]--
 script.Parent = imgui
 
 local UIS = game:GetService("UserInputService")
@@ -840,8 +830,125 @@ local Windows = script.Parent:FindFirstChild("Windows")
 
 local checks = {
 	["binding"] = false,
+	["rainbow"] = false,
 }
 
+-- ============================================
+-- THEME SYSTEM
+-- ============================================
+local themes = {
+	dark = {
+		bg = Color3.fromRGB(20, 20, 25),
+		surface = Color3.fromRGB(30, 30, 38),
+		text = Color3.new(1, 1, 1),
+		accent = Color3.fromRGB(30, 144, 255),
+		border = Color3.fromRGB(50, 50, 60),
+	},
+	neon = {
+		bg = Color3.fromRGB(10, 0, 20),
+		surface = Color3.fromRGB(20, 0, 40),
+		text = Color3.fromRGB(0, 255, 255),
+		accent = Color3.fromRGB(255, 0, 200),
+		border = Color3.fromRGB(255, 0, 200),
+	},
+	pastel = {
+		bg = Color3.fromRGB(40, 35, 45),
+		surface = Color3.fromRGB(55, 50, 60),
+		text = Color3.fromRGB(255, 200, 210),
+		accent = Color3.fromRGB(255, 180, 200),
+		border = Color3.fromRGB(255, 200, 210),
+	},
+	professional = {
+		bg = Color3.fromRGB(20, 25, 30),
+		surface = Color3.fromRGB(35, 40, 48),
+		text = Color3.new(1, 1, 1),
+		accent = Color3.fromRGB(52, 152, 219),
+		border = Color3.fromRGB(60, 65, 75),
+	},
+	gaming = {
+		bg = Color3.fromRGB(10, 10, 10),
+		surface = Color3.fromRGB(25, 0, 0),
+		text = Color3.fromRGB(0, 255, 0),
+		accent = Color3.fromRGB(255, 0, 0),
+		border = Color3.fromRGB(255, 0, 0),
+	},
+}
+
+-- ============================================
+-- SHAPE SYSTEM
+-- ============================================
+local shapes = {
+	pill = { slice = Rect.new(25, 25, 25, 25), radius = 50 },
+	square = { slice = Rect.new(0, 0, 0, 0), radius = 0 },
+	rounded = { slice = Rect.new(8, 8, 8, 8), radius = 8 },
+	circle = { slice = Rect.new(50, 50, 50, 50), radius = 100 },
+}
+
+-- ============================================
+-- SIZE HIERARCHY
+-- ============================================
+local sizes = {
+	xs = 12,
+	sm = 16,
+	md = 24,
+	lg = 32,
+	xl = 48,
+}
+
+-- ============================================
+-- SPACING SYSTEM
+-- ============================================
+local spacing = {
+	tiny = 4,
+	small = 8,
+	medium = 12,
+	large = 20,
+	huge = 32,
+	massive = 48,
+}
+
+-- ============================================
+-- RAINBOW SYSTEM
+-- ============================================
+local rainbow_elements = {}
+
+local function getRainbowColor(offset)
+	offset = offset or 0
+	local hue = (tick() * 0.1 + offset) % 1
+	return Color3.fromHSV(hue, 1, 1)
+end
+
+local function applyRainbowStroke(element, style)
+	style = style or "pulse"
+	
+	local stroke = Instance.new("UIStroke")
+	stroke.Parent = element
+	stroke.Thickness = 2
+	stroke.Transparency = 0.3
+	stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	
+	local function updateRainbow()
+		while element and element.Parent do
+			local hue = (tick() * 0.1) % 1
+			if style == "pulse" then
+				local brightness = 0.5 + 0.5 * math.sin(tick() * 3)
+				stroke.Color = Color3.fromHSV(hue, 1, brightness)
+			elseif style == "spin" then
+				stroke.Color = Color3.fromHSV((hue + 0.5) % 1, 1, 1)
+			elseif style == "gradient" then
+				-- Gradient handled differently
+			end
+			RS.Heartbeat:Wait()
+		end
+	end
+	
+	coroutine.wrap(updateRainbow)()
+	return stroke
+end
+
+-- ============================================
+-- EXISTING FUNCTIONS
+-- ============================================
 UIS.InputBegan:Connect(function(input, gameProcessed)
 	if input.KeyCode == ((typeof(ui_options.toggle_key) == "EnumItem") and ui_options.toggle_key or Enum.KeyCode.RightShift) then
 		if script.Parent then
@@ -908,14 +1015,26 @@ local function gMouse()
 	return Vector2.new(UIS:GetMouseLocation().X + 1, UIS:GetMouseLocation().Y - 35)
 end
 
-local function ripple(button, x, y)
+-- ============================================
+-- ENHANCED RIPPLE WITH RAINBOW
+-- ============================================
+local function ripple(button, x, y, rainbow)
 	spawn(function()
 		button.ClipsDescendants = true
 
 		local circle = Prefabs:FindFirstChild("Circle"):Clone()
-
 		circle.Parent = button
 		circle.ZIndex = 1000
+		
+		if rainbow then
+			circle.ImageColor3 = getRainbowColor()
+			coroutine.wrap(function()
+				while circle and circle.Parent do
+					circle.ImageColor3 = getRainbowColor()
+					RS.Heartbeat:Wait()
+				end
+			end)()
+		end
 
 		local new_x = x - circle.AbsolutePosition.X
 		local new_y = y - circle.AbsolutePosition.Y
@@ -926,7 +1045,7 @@ local function ripple(button, x, y)
 			 size = button.AbsoluteSize.X * 1.5
 		elseif button.AbsoluteSize.X < button.AbsoluteSize.Y then
 			 size = button.AbsoluteSize.Y * 1.5
-		elseif button.AbsoluteSize.X == button.AbsoluteSize.Y then
+		else
 			size = button.AbsoluteSize.X * 1.5
 		end
 
@@ -938,6 +1057,51 @@ local function ripple(button, x, y)
 	end)
 end
 
+-- ============================================
+-- ENHANCED HOVER EFFECTS
+-- ============================================
+local function applyHover(element, scale)
+	scale = scale or 1.05
+	element.MouseEnter:Connect(function()
+		TweenService:Create(element, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {
+			Size = element.Size * scale
+		}):Play()
+	end)
+	element.MouseLeave:Connect(function()
+		TweenService:Create(element, TweenInfo.new(0.3, Enum.EasingStyle.Quad), {
+			Size = element.Size / scale
+		}):Play()
+	end)
+end
+
+-- ============================================
+-- APPLY THEME TO ELEMENT
+-- ============================================
+local function applyThemeToElement(element, theme_name)
+	local theme = themes[theme_name] or themes.dark
+	if element:IsA("ImageLabel") or element:IsA("Frame") then
+		if element.Name ~= "Bar" and element.Name ~= "Base" and element.Name ~= "Top" then
+			element.ImageColor3 = theme.surface
+		end
+	end
+	if element:IsA("TextLabel") or element:IsA("TextBox") or element:IsA("TextButton") then
+		element.TextColor3 = theme.text
+	end
+end
+
+-- ============================================
+-- APPLY SHAPE
+-- ============================================
+local function applyShape(element, shape_name)
+	local shape = shapes[shape_name] or shapes.rounded
+	if element:IsA("ImageLabel") or element:IsA("ImageButton") then
+		element.SliceCenter = shape.slice
+	end
+end
+
+-- ============================================
+-- LIBRARY
+-- ============================================
 local windows = 0
 local library = {}
 
@@ -963,6 +1127,58 @@ function library:FormatWindows()
 	format_windows()
 end
 
+function library:SetTheme(theme_name)
+	ui_options.theme = theme_name
+	local theme = themes[theme_name] or themes.dark
+	ui_options.main_color = theme.accent
+	-- Update all existing windows
+	for _, window in ipairs(Windows:GetChildren()) do
+		if window:IsA("ImageLabel") and window.Name == "Window" then
+			window.ImageColor3 = theme.bg
+			local bar = window:FindFirstChild("Bar")
+			if bar then
+				bar.BackgroundColor3 = theme.accent
+				local base = bar:FindFirstChild("Base")
+				if base then
+					base.BackgroundColor3 = theme.accent
+					base.ImageColor3 = theme.accent
+				end
+				local top = bar:FindFirstChild("Top")
+				if top then
+					top.ImageColor3 = theme.accent
+				end
+			end
+			local title = window:FindFirstChild("Title")
+			if title then
+				title.TextColor3 = theme.text
+			end
+		end
+	end
+end
+
+function library:SetShape(shape_name)
+	ui_options.shape = shape_name
+	-- Update prefabs
+	for _, v in ipairs(Prefabs:GetChildren()) do
+		if v:IsA("ImageLabel") or v:IsA("ImageButton") then
+			applyShape(v, shape_name)
+		end
+	end
+end
+
+function library:SetCornerRadius(radius)
+	ui_options.corner_radius = radius
+	local slice = Rect.new(radius, radius, radius, radius)
+	for _, v in ipairs(Prefabs:GetChildren()) do
+		if v:IsA("ImageLabel") or v:IsA("ImageButton") then
+			v.SliceCenter = slice
+		end
+	end
+end
+
+-- ============================================
+-- ENHANCED ADDWINDOW
+-- ============================================
 function library:AddWindow(title, options)
 	windows = windows + 1
 	local dropdown_open = false
@@ -975,6 +1191,11 @@ function library:AddWindow(title, options)
 	Window:FindFirstChild("Title").Text = title
 	Window.Size = UDim2.new(0, options.min_size.X, 0, options.min_size.Y)
 	Window.ZIndex = Window.ZIndex + (windows * 10)
+	
+	-- Apply theme
+	local theme = themes[options.theme] or themes.dark
+	Window.ImageColor3 = theme.bg
+	Window:FindFirstChild("Title").TextColor3 = theme.text
 
 	do -- Altering Window Color
 		local Title = Window:FindFirstChild("Title")
@@ -997,6 +1218,16 @@ function library:AddWindow(title, options)
 				Base.ImageColor3 = options.main_color
 				Top.ImageColor3 = options.main_color
 				SplitFrame.BackgroundColor3 = options.main_color
+				
+				-- Rainbow glow if enabled
+				if checks.rainbow then
+					local rainbow = getRainbowColor()
+					Bar.BackgroundColor3 = rainbow
+					Base.BackgroundColor3 = rainbow
+					Base.ImageColor3 = rainbow
+					Top.ImageColor3 = rainbow
+					SplitFrame.BackgroundColor3 = rainbow
+				end
 
 				RS.Heartbeat:Wait()
 			end
@@ -1127,6 +1358,9 @@ function library:AddWindow(title, options)
 				new_button.Size = UDim2.new(0, gNameLen(new_button), 0, 20)
 				new_button.ZIndex = new_button.ZIndex + (windows * 10)
 				new_button:GetChildren()[1].ZIndex = new_button:GetChildren()[1].ZIndex + (windows * 10)
+				
+				-- Apply shape
+				applyShape(new_button, options.shape)
 
 				local new_tab = Prefabs:FindFirstChild("Tab"):Clone()
 				new_tab.Parent = tabs
@@ -1147,6 +1381,12 @@ function library:AddWindow(title, options)
 					Resize(new_button, {Size = UDim2.new(0, new_button.AbsoluteSize.X, 0, 25)}, options.tween_time)
 					new_button:GetChildren()[1].ImageColor3 = Color3.fromRGB(73, 75, 79)
 					new_tab.Visible = true
+					
+					-- Rainbow highlight on active tab
+					if checks.rainbow then
+						local stroke = applyRainbowStroke(new_button, "pulse")
+						stroke.Thickness = 2
+					end
 				end
 
 				new_button.MouseButton1Click:Connect(function()
@@ -1158,7 +1398,6 @@ function library:AddWindow(title, options)
 				end
 
 				do -- Tab Elements
-
 					function tab_data:AddLabel(label_text)
 						label_text = tostring(label_text or "New Label")
 
@@ -1168,13 +1407,15 @@ function library:AddWindow(title, options)
 						label.Text = label_text
 						label.Size = UDim2.new(0, gNameLen(label), 0, 20)
 						label.ZIndex = label.ZIndex + (windows * 10)
+						applyThemeToElement(label, options.theme)
 
 						return label
 					end
 
-					function tab_data:AddButton(button_text, callback)
+					function tab_data:AddButton(button_text, callback, rainbow_ripple)
 						button_text = tostring(button_text or "New Button")
 						callback = typeof(callback) == "function" and callback or function()end
+						rainbow_ripple = rainbow_ripple or false
 
 						local button = Prefabs:FindFirstChild("Button"):Clone()
 
@@ -1183,29 +1424,47 @@ function library:AddWindow(title, options)
 						button.Size = UDim2.new(0, gNameLen(button), 0, 20)
 						button.ZIndex = button.ZIndex + (windows * 10)
 						button:GetChildren()[1].ZIndex = button:GetChildren()[1].ZIndex + (windows * 10)
+						
+						-- Apply shape
+						applyShape(button, options.shape)
+						
+						-- Apply hover effect
+						applyHover(button, 1.05)
 
 						spawn(function()
 							while true do
 								if button and button:GetChildren()[1] then
 									button:GetChildren()[1].ImageColor3 = options.main_color
+									if checks.rainbow then
+										button:GetChildren()[1].ImageColor3 = getRainbowColor()
+									end
 								end
 								RS.Heartbeat:Wait()
 							end
 						end)
 
 						button.MouseButton1Click:Connect(function()
-							ripple(button, mouse.X, mouse.Y)
+							ripple(button, mouse.X, mouse.Y, rainbow_ripple)
+							-- Squish animation
+							TweenService:Create(button, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {
+								Size = UDim2.new(0, button.AbsoluteSize.X * 0.95, 0, button.AbsoluteSize.Y * 0.95)
+							}):Play()
+							wait(0.15)
+							TweenService:Create(button, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {
+								Size = UDim2.new(0, button.AbsoluteSize.X / 0.95, 0, button.AbsoluteSize.Y / 0.95)
+							}):Play()
 							pcall(callback)
 						end)
 
 						return button
 					end
 
-					function tab_data:AddSwitch(switch_text, callback)
+					function tab_data:AddSwitch(switch_text, callback, rainbow_on)
 						local switch_data = {}
 
 						switch_text = tostring(switch_text or "New Switch")
 						callback = typeof(callback) == "function" and callback or function()end
+						rainbow_on = rainbow_on or false
 
 						local switch = Prefabs:FindFirstChild("Switch"):Clone()
 
@@ -1215,11 +1474,17 @@ function library:AddWindow(title, options)
 						switch:FindFirstChild("Title").ZIndex = switch:FindFirstChild("Title").ZIndex + (windows * 10)
 						switch.ZIndex = switch.ZIndex + (windows * 10)
 						switch:GetChildren()[1].ZIndex = switch:GetChildren()[1].ZIndex + (windows * 10)
+						
+						-- Apply shape
+						applyShape(switch, options.shape)
 
 						spawn(function()
 							while true do
 								if switch and switch:GetChildren()[1] then
 									switch:GetChildren()[1].ImageColor3 = options.main_color
+									if checks.rainbow and rainbow_on then
+										switch:GetChildren()[1].ImageColor3 = getRainbowColor()
+									end
 								end
 								RS.Heartbeat:Wait()
 							end
@@ -1230,6 +1495,12 @@ function library:AddWindow(title, options)
 							toggled = not toggled
 							switch.Text = toggled and utf8.char(10003) or ""
 							pcall(callback, toggled)
+							
+							-- Rainbow glow when on
+							if toggled and rainbow_on then
+								local stroke = applyRainbowStroke(switch, "pulse")
+								stroke.Thickness = 3
+							end
 						end)
 
 						function switch_data:Set(bool)
@@ -1241,44 +1512,8 @@ function library:AddWindow(title, options)
 						return switch_data, switch
 					end
 
-					function tab_data:AddToggle(switch_text, callback)
-						local switch_data = {}
-
-						switch_text = tostring(switch_text or "New Switch")
-						callback = typeof(callback) == "function" and callback or function()end
-
-						local switch = Prefabs:FindFirstChild("Switch"):Clone()
-
-						switch.Parent = new_tab
-						switch:FindFirstChild("Title").Text = switch_text
-
-						switch:FindFirstChild("Title").ZIndex = switch:FindFirstChild("Title").ZIndex + (windows * 10)
-						switch.ZIndex = switch.ZIndex + (windows * 10)
-						switch:GetChildren()[1].ZIndex = switch:GetChildren()[1].ZIndex + (windows * 10)
-
-						spawn(function()
-							while true do
-								if switch and switch:GetChildren()[1] then
-									switch:GetChildren()[1].ImageColor3 = options.main_color
-								end
-								RS.Heartbeat:Wait()
-							end
-						end)
-
-						local toggled = false
-						switch.MouseButton1Click:Connect(function()
-							toggled = not toggled
-							switch.Text = toggled and utf8.char(10003) or ""
-							pcall(callback, toggled)
-						end)
-
-						function switch_data:Set(bool)
-							toggled = (typeof(bool) == "boolean") and bool or false
-							switch.Text = toggled and utf8.char(10003) or ""
-							pcall(callback,toggled)
-						end
-
-						return switch_data, switch
+					function tab_data:AddToggle(switch_text, callback, rainbow_on)
+						return tab_data:AddSwitch(switch_text, callback, rainbow_on)
 					end
 
 					function tab_data:AddTextBox(textbox_text, callback, textbox_options)
@@ -1295,6 +1530,10 @@ function library:AddWindow(title, options)
 						textbox.PlaceholderText = textbox_text
 						textbox.ZIndex = textbox.ZIndex + (windows * 10)
 						textbox:GetChildren()[1].ZIndex = textbox:GetChildren()[1].ZIndex + (windows * 10)
+						
+						-- Apply shape
+						applyShape(textbox, options.shape)
+						applyThemeToElement(textbox, options.theme)
 
 						textbox.FocusLost:Connect(function(ep)
 							if ep then
@@ -1326,6 +1565,9 @@ function library:AddWindow(title, options)
 
 						slider.Parent = new_tab
 						slider.ZIndex = slider.ZIndex + (windows * 10)
+						
+						-- Apply shape
+						applyShape(slider, options.shape)
 
 						local title = slider:FindFirstChild("Title")
 						local indicator = slider:FindFirstChild("Indicator")
@@ -1381,6 +1623,13 @@ function library:AddWindow(title, options)
 
 												value.Text = tostring(sel_value)
 												pcall(callback, sel_value)
+												
+												-- Rainbow indicator
+												if checks.rainbow then
+													indicator.ImageColor3 = getRainbowColor()
+												else
+													indicator.ImageColor3 = options.main_color
+												end
 
 												RS.Heartbeat:Wait()
 											end
@@ -1434,6 +1683,9 @@ function library:AddWindow(title, options)
 						input.ZIndex = input.ZIndex + (windows * 10)
 						input:GetChildren()[1].ZIndex = input:GetChildren()[1].ZIndex + (windows * 10)
 						title.ZIndex = title.ZIndex + (windows * 10)
+						
+						-- Apply shape
+						applyShape(keybind, options.shape)
 
 						keybind.Parent = new_tab
 						title.Text = "  " .. keybind_name
@@ -1496,6 +1748,9 @@ function library:AddWindow(title, options)
 						objects.ZIndex = objects.ZIndex + (windows * 10)
 						indicator.ZIndex = indicator.ZIndex + (windows * 10)
 						dropdown:GetChildren()[3].ZIndex = dropdown:GetChildren()[3].ZIndex + (windows * 10)
+						
+						-- Apply shape
+						applyShape(dropdown, options.shape)
 
 						dropdown.Parent = new_tab
 						dropdown.Text = "      " .. dropdown_name
@@ -1533,9 +1788,15 @@ function library:AddWindow(title, options)
 							object.Parent = objects
 							object.Text = n
 							object.ZIndex = object.ZIndex + (windows * 10)
+							
+							-- Apply shape
+							applyShape(object, options.shape)
 
 							object.MouseEnter:Connect(function()
 								object.BackgroundColor3 = options.main_color
+								if checks.rainbow then
+									object.BackgroundColor3 = getRainbowColor()
+								end
 							end)
 							object.MouseLeave:Connect(function()
 								object.BackgroundColor3 = Color3.fromRGB(33, 34, 36)
@@ -1579,6 +1840,9 @@ function library:AddWindow(title, options)
 
 						color_picker.Parent = new_tab
 						color_picker.ZIndex = color_picker.ZIndex + (windows * 10)
+						
+						-- Apply shape
+						applyShape(color_picker, options.shape)
 
 						local palette = color_picker:FindFirstChild("Palette")
 						local sample = color_picker:FindFirstChild("Sample")
@@ -1697,6 +1961,9 @@ function library:AddWindow(title, options)
 						console.Parent = new_tab
 						console.ZIndex = console.ZIndex + (windows * 10)
 						console.Size = UDim2.new(1, 0, console_options.full and 1 or 0, console_options.y)
+						
+						-- Apply shape
+						applyShape(console, options.shape)
 
 						local sf = console:GetChildren()[1]
 						local Source = sf:FindFirstChild("Source")
@@ -2051,10 +2318,11 @@ function library:AddWindow(title, options)
 						return ha_data, ha
 					end
 
-					function tab_data:AddFolder(folder_name)
+					function tab_data:AddFolder(folder_name, rainbow_border)
 						local folder_data = {}
 
 						folder_name = tostring(folder_name or "New Folder")
+						rainbow_border = rainbow_border or false
 
 						local folder = Prefabs:FindFirstChild("Folder"):Clone()
 						local button = folder:FindFirstChild("Button")
@@ -2068,11 +2336,17 @@ function library:AddWindow(title, options)
 
 						folder.Parent = new_tab
 						button.Text = "      " .. folder_name
+						
+						-- Apply shape
+						applyShape(folder, options.shape)
 
 						spawn(function()
 							while true do
 								if button and button:GetChildren()[1] then
 									button:GetChildren()[1].ImageColor3 = options.main_color
+									if checks.rainbow and rainbow_border then
+										button:GetChildren()[1].ImageColor3 = getRainbowColor()
+									end
 								end
 								RS.Heartbeat:Wait()
 							end
@@ -2099,6 +2373,12 @@ function library:AddWindow(title, options)
 							end
 
 							open = not open
+							
+							-- Rainbow border when open
+							if open and rainbow_border then
+								local stroke = applyRainbowStroke(folder, "pulse")
+								stroke.Thickness = 2
+							end
 						end)
 
 						spawn(function()
@@ -2145,4 +2425,12 @@ function library:AddWindow(title, options)
 
 	return window_data, Window
 end
+
+-- ============================================
+-- RAINBOW TOGGLE
+-- ============================================
+function library:ToggleRainbow(enabled)
+	checks.rainbow = enabled or false
+end
+
 return library
