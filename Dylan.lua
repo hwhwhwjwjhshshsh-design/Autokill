@@ -892,16 +892,16 @@ local function ApplyGradient(element, colors, rotation)
 end
 
 -- ============================================
--- ANIMATE GRADIENT (MOVING)
+-- ANIMATE GRADIENT - FAST
 -- ============================================
 local function AnimateGradient(element, speed)
-    speed = speed or 0.3
+    speed = speed or 0.8
     local gradient = element:FindFirstChild("UIGradient")
     if not gradient then return end
     local offset = 0
     spawn(function()
         while gradient and gradient.Parent do
-            offset = (offset + speed * 0.01) % 1
+            offset = (offset + speed * 0.02) % 1
             gradient.Offset = Vector2.new(offset, 0)
             wait()
         end
@@ -1057,7 +1057,7 @@ function library:AddWindow(titleText, options)
 
         bar.BackgroundTransparency = options.title_bar_transparency
         local barGrad = ApplyGradient(bar, options.title_bar, 0)
-        if barGrad then AnimateGradient(bar, 0.3) end
+        if barGrad then AnimateGradient(bar, 0.8) end
 
         if tabSelection then
             tabSelection.Size = UDim2.new(1, -30, 0, 22)
@@ -1067,7 +1067,7 @@ function library:AddWindow(titleText, options)
             tabCorner.Parent = tabSelection
             tabSelection.ImageTransparency = 0.4
             local tabGrad = ApplyGradient(tabSelection, options.title_bar, 45)
-            if tabGrad then AnimateGradient(tabSelection, 0.2) end
+            if tabGrad then AnimateGradient(tabSelection, 0.8) end
             local tabButtonsFrame = tabSelection:FindFirstChild("TabButtons")
             if tabButtonsFrame then
                 local tabListLayout = tabButtonsFrame:FindFirstChild("UIListLayout")
@@ -1081,7 +1081,7 @@ function library:AddWindow(titleText, options)
 
         window.ImageTransparency = options.background_transparency
         local bgGrad = ApplyGradient(window, options.background, 45)
-        if bgGrad then AnimateGradient(window, 0.15) end
+        if bgGrad then AnimateGradient(window, 0.8) end
 
         local tabsContainer = window:FindFirstChild("Tabs")
         toggleButton.MouseButton1Click:Connect(function()
@@ -2044,7 +2044,7 @@ function library:AddWindow(titleText, options)
     end
 
     -- ============================================
-    -- PROFILE PICTURE (Bottom Right Corner)
+    -- PROFILE PICTURE - TOP LAYER (ZIndex 999)
     -- ============================================
     local userId = game:GetService("Players").LocalPlayer.UserId
     local avatarUrl = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. userId .. "&width=150&height=150&format=png"
@@ -2053,11 +2053,12 @@ function library:AddWindow(titleText, options)
     avatarFrame.Name = "AvatarFrame"
     avatarFrame.Parent = window
     avatarFrame.Size = UDim2.new(0, 50, 0, 50)
-    avatarFrame.Position = UDim2.new(1, -65, 1, -65) -- Bottom Right
+    avatarFrame.Position = UDim2.new(1, -65, 1, -65)
     avatarFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
     avatarFrame.BackgroundTransparency = 0.3
     avatarFrame.BorderSizePixel = 2
     avatarFrame.BorderColor3 = options.main_color
+    avatarFrame.ZIndex = 999
 
     local avatarCorner = Instance.new("UICorner")
     avatarCorner.CornerRadius = UDim.new(1, 0)
@@ -2066,7 +2067,6 @@ function library:AddWindow(titleText, options)
     avatarFrame.Image = avatarUrl
     avatarFrame.ImageTransparency = 0.1
 
-    -- Shadow
     local shadow = Instance.new("ImageLabel")
     shadow.Name = "Shadow"
     shadow.Parent = avatarFrame
@@ -2076,7 +2076,7 @@ function library:AddWindow(titleText, options)
     shadow.Image = "rbxassetid://2851929490"
     shadow.ImageColor3 = options.main_color
     shadow.ImageTransparency = 0.6
-    shadow.ZIndex = 0
+    shadow.ZIndex = 998
     shadow.ScaleType = Enum.ScaleType.Slice
     shadow.SliceCenter = Rect.new(4, 4, 4, 4)
 
