@@ -892,19 +892,19 @@ local function ApplyGradient(element, colors, rotation)
 end
 
 -- ============================================
--- ANIMATE GRADIENT - CONTINUOUS LOOP
+-- ANIMATE GRADIENT - MAX SPEED (FAST AF)
 -- ============================================
 local function AnimateGradient(element, speed)
-    speed = speed or 0.5
+    speed = speed or 3.0
     local gradient = element:FindFirstChild("UIGradient")
     if not gradient then return end
     local offset = 0
     spawn(function()
         while gradient and gradient.Parent do
-            offset = offset + speed * 0.01
+            offset = offset + speed * 0.08
             if offset > 1 then offset = offset - 1 end
             gradient.Offset = Vector2.new(offset, 0)
-            wait()
+            task.wait()
         end
     end)
 end
@@ -1058,7 +1058,7 @@ function library:AddWindow(titleText, options)
 
         bar.BackgroundTransparency = options.title_bar_transparency
         local barGrad = ApplyGradient(bar, options.title_bar, 0)
-        if barGrad then AnimateGradient(bar, 0.5) end
+        if barGrad then AnimateGradient(bar, 3.0) end
 
         if tabSelection then
             tabSelection.Size = UDim2.new(1, -30, 0, 22)
@@ -1068,7 +1068,7 @@ function library:AddWindow(titleText, options)
             tabCorner.Parent = tabSelection
             tabSelection.ImageTransparency = 0.4
             local tabGrad = ApplyGradient(tabSelection, options.title_bar, 45)
-            if tabGrad then AnimateGradient(tabSelection, 0.5) end
+            if tabGrad then AnimateGradient(tabSelection, 3.0) end
             local tabButtonsFrame = tabSelection:FindFirstChild("TabButtons")
             if tabButtonsFrame then
                 local tabListLayout = tabButtonsFrame:FindFirstChild("UIListLayout")
@@ -1082,7 +1082,7 @@ function library:AddWindow(titleText, options)
 
         window.ImageTransparency = options.background_transparency
         local bgGrad = ApplyGradient(window, options.background, 45)
-        if bgGrad then AnimateGradient(window, 0.5) end
+        if bgGrad then AnimateGradient(window, 3.0) end
 
         local tabsContainer = window:FindFirstChild("Tabs")
         toggleButton.MouseButton1Click:Connect(function()
@@ -2073,19 +2073,6 @@ function library:AddWindow(titleText, options)
 
     avatarFrame.Image = avatarUrl
     avatarFrame.ImageTransparency = 0.1
-
-    local shadow = Instance.new("ImageLabel")
-    shadow.Name = "Shadow"
-    shadow.Parent = avatarFrame
-    shadow.Size = UDim2.new(1.3, 0, 1.3, 0)
-    shadow.Position = UDim2.new(-0.15, 0, -0.15, 0)
-    shadow.BackgroundTransparency = 1
-    shadow.Image = "rbxassetid://2851929490"
-    shadow.ImageColor3 = options.main_color
-    shadow.ImageTransparency = 0.7
-    shadow.ZIndex = 998
-    shadow.ScaleType = Enum.ScaleType.Slice
-    shadow.SliceCenter = Rect.new(4, 4, 4, 4)
 
     return windowData, window
 end
