@@ -892,17 +892,17 @@ local function ApplyGradient(element, colors, rotation)
 end
 
 -- ============================================
--- ANIMATE GRADIENT - NORMAL FAST SPEED
+-- ANIMATE GRADIENT - SLIDING WAVE (off-screen to on-screen loop)
 -- ============================================
 local function AnimateGradient(element, speed)
-    speed = speed or 1.5
+    speed = speed or 0.8
     local gradient = element:FindFirstChild("UIGradient")
     if not gradient then return end
-    local offset = 0
+    local offset = -1.0  -- Start OFF-SCREEN (left side)
     spawn(function()
         while gradient and gradient.Parent do
-            offset = offset + speed * 0.03
-            if offset > 1 then offset = offset - 1 end
+            offset = offset + speed * 0.025
+            if offset > 1.5 then offset = -1.0 end  -- Reset to off-screen left
             gradient.Offset = Vector2.new(offset, 0)
             task.wait()
         end
