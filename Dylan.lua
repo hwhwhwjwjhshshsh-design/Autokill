@@ -3,11 +3,7 @@ local ui_options = {
 	min_size = Vector2.new(500, 500),
 	toggle_key = Enum.KeyCode.RightShift,
 	can_resize = true,
-	theme = "dark",
-	shape = "rounded",
 	corner_radius = 8,
-	spacing = "medium",
-	rainbow_speed = 0.02,
 }
 
 do
@@ -97,12 +93,17 @@ Prefabs.BackgroundColor3 = Color3.new(1, 1, 1)
 Prefabs.Size = UDim2.new(0, 100, 0, 100)
 Prefabs.Visible = false
 
+-- ============================================
+-- ALL FONTS SET TO FONDAMENTO
+-- ============================================
+local FONT = Enum.Font.Fondamento
+
 Label.Name = "Label"
 Label.Parent = Prefabs
 Label.BackgroundColor3 = Color3.new(1, 1, 1)
 Label.BackgroundTransparency = 1
 Label.Size = UDim2.new(0, 200, 0, 20)
-Label.Font = Enum.Font.GothamSemibold
+Label.Font = FONT
 Label.Text = "Hello, world 123"
 Label.TextColor3 = Color3.new(1, 1, 1)
 Label.TextSize = 14
@@ -190,7 +191,7 @@ Title.BackgroundColor3 = Color3.new(1, 1, 1)
 Title.BackgroundTransparency = 1
 Title.Position = UDim2.new(0, 30, 0, 3)
 Title.Size = UDim2.new(0, 200, 0, 20)
-Title.Font = Enum.Font.GothamBold
+Title.Font = FONT
 Title.Text = "Gamer Time"
 Title.TextColor3 = Color3.new(1, 1, 1)
 Title.TextSize = 14
@@ -243,7 +244,7 @@ TextBox.BackgroundTransparency = 1
 TextBox.BorderSizePixel = 0
 TextBox.Size = UDim2.new(1, 0, 0, 20)
 TextBox.ZIndex = 2
-TextBox.Font = Enum.Font.GothamSemibold
+TextBox.Font = FONT
 TextBox.PlaceholderColor3 = Color3.new(0.698039, 0.698039, 0.698039)
 TextBox.PlaceholderText = "Input Text"
 TextBox.Text = ""
@@ -278,7 +279,7 @@ Title_2.BackgroundTransparency = 1
 Title_2.Position = UDim2.new(0.5, 0, 0.5, -10)
 Title_2.Size = UDim2.new(0, 0, 0, 20)
 Title_2.ZIndex = 2
-Title_2.Font = Enum.Font.GothamBold
+Title_2.Font = FONT
 Title_2.Text = "Slider"
 Title_2.TextColor3 = Color3.new(1, 1, 1)
 Title_2.TextSize = 14
@@ -299,7 +300,7 @@ Value.BackgroundColor3 = Color3.new(1, 1, 1)
 Value.BackgroundTransparency = 1
 Value.Position = UDim2.new(1, -55, 0.5, -10)
 Value.Size = UDim2.new(0, 50, 0, 20)
-Value.Font = Enum.Font.GothamBold
+Value.Font = FONT
 Value.Text = "0%"
 Value.TextColor3 = Color3.new(1, 1, 1)
 Value.TextSize = 14
@@ -309,7 +310,7 @@ TextLabel.BackgroundColor3 = Color3.new(1, 1, 1)
 TextLabel.BackgroundTransparency = 1
 TextLabel.Position = UDim2.new(1, -20, -0.75, 0)
 TextLabel.Size = UDim2.new(0, 26, 0, 50)
-TextLabel.Font = Enum.Font.GothamBold
+TextLabel.Font = FONT
 TextLabel.Text = "]"
 TextLabel.TextColor3 = Color3.new(0.627451, 0.627451, 0.627451)
 TextLabel.TextSize = 14
@@ -319,7 +320,7 @@ TextLabel_2.BackgroundColor3 = Color3.new(1, 1, 1)
 TextLabel_2.BackgroundTransparency = 1
 TextLabel_2.Position = UDim2.new(1, -65, -0.75, 0)
 TextLabel_2.Size = UDim2.new(0, 26, 0, 50)
-TextLabel_2.Font = Enum.Font.GothamBold
+TextLabel_2.Font = FONT
 TextLabel_2.Text = "["
 TextLabel_2.TextColor3 = Color3.new(0.627451, 0.627451, 0.627451)
 TextLabel_2.TextSize = 14
@@ -344,7 +345,7 @@ Dropdown.BorderSizePixel = 0
 Dropdown.Position = UDim2.new(-0.055555556, 0, 0.0833333284, 0)
 Dropdown.Size = UDim2.new(0, 200, 0, 20)
 Dropdown.ZIndex = 2
-Dropdown.Font = Enum.Font.GothamBold
+Dropdown.Font = FONT
 Dropdown.Text = "      Dropdown"
 Dropdown.TextColor3 = Color3.new(1, 1, 1)
 Dropdown.TextSize = 14
@@ -403,7 +404,7 @@ TabButton.BorderSizePixel = 0
 TabButton.Position = UDim2.new(0.185185179, 0, 0, 0)
 TabButton.Size = UDim2.new(0, 71, 0, 20)
 TabButton.ZIndex = 2
-TabButton.Font = Enum.Font.GothamSemibold
+TabButton.Font = FONT
 TabButton.Text = "Test tab"
 TabButton.TextColor3 = Color3.new(1, 1, 1)
 TabButton.TextSize = 14
@@ -436,7 +437,7 @@ Button.BackgroundTransparency = 0
 Button.BorderSizePixel = 0
 Button.Size = UDim2.new(1, 0, 0, 20)
 Button.ZIndex = 2
-Button.Font = Enum.Font.GothamSemibold
+Button.Font = FONT
 Button.Text = "      Folder"
 Button.TextColor3 = Color3.new(1, 1, 1)
 Button.TextSize = 14
@@ -509,7 +510,7 @@ Source.Position = UDim2.new(0, 40, 0, 0)
 Source.Size = UDim2.new(1, -40, 0, 10000)
 Source.ZIndex = 3
 Source.ClearTextOnFocus = false
-Source.Font = Enum.Font.Code
+Source.Font = FONT
 Source.MultiLine = true
 Source.PlaceholderColor3 = Color3.new(0.8, 0.8, 0.8)
 Source.Text = ""
@@ -526,7 +527,7 @@ Comments.BackgroundColor3 = Color3.new(1, 1, 1)
 Comments.BackgroundTransparency = 1
 Comments.Size = UDim2.new(1, 0, 1, 0)
 Comments.ZIndex = 5
-Comments.Font = Enum.Font.Code
+Comments.Font = FONT
 Comments.Text = ""
 Comments.TextColor3 = Color3.new(0.231373, 0.784314, 0.231373)
 Comments.TextSize = 15
@@ -539,7 +540,7 @@ Globals.BackgroundColor3 = Color3.new(1, 1, 1)
 Globals.BackgroundTransparency = 1
 Globals.Size = UDim2.new(1, 0, 1, 0)
 Globals.ZIndex = 5
-Globals.Font = Enum.Font.Code
+Globals.Font = FONT
 Globals.Text = ""
 Globals.TextColor3 = Color3.new(0.517647, 0.839216, 0.968628)
 Globals.TextSize = 15
@@ -552,7 +553,7 @@ Keywords.BackgroundColor3 = Color3.new(1, 1, 1)
 Keywords.BackgroundTransparency = 1
 Keywords.Size = UDim2.new(1, 0, 1, 0)
 Keywords.ZIndex = 5
-Keywords.Font = Enum.Font.Code
+Keywords.Font = FONT
 Keywords.Text = ""
 Keywords.TextColor3 = Color3.new(0.972549, 0.427451, 0.486275)
 Keywords.TextSize = 15
@@ -565,7 +566,7 @@ RemoteHighlight.BackgroundColor3 = Color3.new(1, 1, 1)
 RemoteHighlight.BackgroundTransparency = 1
 RemoteHighlight.Size = UDim2.new(1, 0, 1, 0)
 RemoteHighlight.ZIndex = 5
-RemoteHighlight.Font = Enum.Font.Code
+RemoteHighlight.Font = FONT
 RemoteHighlight.Text = ""
 RemoteHighlight.TextColor3 = Color3.new(0, 0.568627, 1)
 RemoteHighlight.TextSize = 15
@@ -578,7 +579,7 @@ Strings.BackgroundColor3 = Color3.new(1, 1, 1)
 Strings.BackgroundTransparency = 1
 Strings.Size = UDim2.new(1, 0, 1, 0)
 Strings.ZIndex = 5
-Strings.Font = Enum.Font.Code
+Strings.Font = FONT
 Strings.Text = ""
 Strings.TextColor3 = Color3.new(0.678431, 0.945098, 0.584314)
 Strings.TextSize = 15
@@ -591,7 +592,7 @@ Tokens.BackgroundColor3 = Color3.new(1, 1, 1)
 Tokens.BackgroundTransparency = 1
 Tokens.Size = UDim2.new(1, 0, 1, 0)
 Tokens.ZIndex = 5
-Tokens.Font = Enum.Font.Code
+Tokens.Font = FONT
 Tokens.Text = ""
 Tokens.TextColor3 = Color3.new(1, 1, 1)
 Tokens.TextSize = 15
@@ -604,7 +605,7 @@ Numbers.BackgroundColor3 = Color3.new(1, 1, 1)
 Numbers.BackgroundTransparency = 1
 Numbers.Size = UDim2.new(1, 0, 1, 0)
 Numbers.ZIndex = 4
-Numbers.Font = Enum.Font.Code
+Numbers.Font = FONT
 Numbers.Text = ""
 Numbers.TextColor3 = Color3.new(1, 0.776471, 0)
 Numbers.TextSize = 15
@@ -617,7 +618,7 @@ Info.BackgroundColor3 = Color3.new(1, 1, 1)
 Info.BackgroundTransparency = 1
 Info.Size = UDim2.new(1, 0, 1, 0)
 Info.ZIndex = 5
-Info.Font = Enum.Font.Code
+Info.Font = FONT
 Info.Text = ""
 Info.TextColor3 = Color3.new(0, 0.635294, 1)
 Info.TextSize = 15
@@ -631,7 +632,7 @@ Lines.BackgroundTransparency = 1
 Lines.BorderSizePixel = 0
 Lines.Size = UDim2.new(0, 40, 0, 10000)
 Lines.ZIndex = 4
-Lines.Font = Enum.Font.Code
+Lines.Font = FONT
 Lines.Text = "1\n"
 Lines.TextColor3 = Color3.new(1, 1, 1)
 Lines.TextSize = 15
@@ -701,7 +702,7 @@ Switch.BorderSizePixel = 0
 Switch.Position = UDim2.new(0.229411766, 0, 0.20714286, 0)
 Switch.Size = UDim2.new(0, 20, 0, 20)
 Switch.ZIndex = 2
-Switch.Font = Enum.Font.SourceSans
+Switch.Font = FONT
 Switch.Text = ""
 Switch.TextColor3 = Color3.new(1, 1, 1)
 Switch.TextSize = 18
@@ -723,7 +724,7 @@ Title_3.BackgroundColor3 = Color3.new(1, 1, 1)
 Title_3.BackgroundTransparency = 1
 Title_3.Position = UDim2.new(1.20000005, 0, 0, 0)
 Title_3.Size = UDim2.new(0, 20, 0, 20)
-Title_3.Font = Enum.Font.GothamSemibold
+Title_3.Font = FONT
 Title_3.Text = "Switch"
 Title_3.TextColor3 = Color3.new(1, 1, 1)
 Title_3.TextSize = 14
@@ -736,7 +737,7 @@ Button_2.BackgroundTransparency = 0
 Button_2.BorderSizePixel = 0
 Button_2.Size = UDim2.new(0, 91, 0, 20)
 Button_2.ZIndex = 2
-Button_2.Font = Enum.Font.GothamSemibold
+Button_2.Font = FONT
 Button_2.TextColor3 = Color3.new(1, 1, 1)
 Button_2.TextSize = 14
 
@@ -756,7 +757,7 @@ DropdownButton.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
 DropdownButton.BorderSizePixel = 0
 DropdownButton.Size = UDim2.new(1, 0, 0, 20)
 DropdownButton.ZIndex = 3
-DropdownButton.Font = Enum.Font.GothamBold
+DropdownButton.Font = FONT
 DropdownButton.Text = "      Button"
 DropdownButton.TextColor3 = Color3.new(1, 1, 1)
 DropdownButton.TextSize = 14
@@ -777,7 +778,7 @@ Title_4.Parent = Keybind
 Title_4.BackgroundColor3 = Color3.new(1, 1, 1)
 Title_4.BackgroundTransparency = 1
 Title_4.Size = UDim2.new(0, 0, 1, 0)
-Title_4.Font = Enum.Font.GothamBold
+Title_4.Font = FONT
 Title_4.Text = "Keybind"
 Title_4.TextColor3 = Color3.new(1, 1, 1)
 Title_4.TextSize = 14
@@ -791,7 +792,7 @@ Input.BorderSizePixel = 0
 Input.Position = UDim2.new(1, -85, 0, 2)
 Input.Size = UDim2.new(0, 80, 1, -4)
 Input.ZIndex = 2
-Input.Font = Enum.Font.GothamSemibold
+Input.Font = FONT
 Input.Text = "RShift"
 Input.TextColor3 = Color3.new(1, 1, 1)
 Input.TextSize = 12
@@ -830,120 +831,65 @@ local Windows = script.Parent:FindFirstChild("Windows")
 
 local checks = {
 	["binding"] = false,
-	["rainbow"] = false,
 }
 
 -- ============================================
--- THEME SYSTEM
+-- RAINBOW SYSTEM - CONSTANTLY MOVING
 -- ============================================
-local themes = {
-	dark = {
-		bg = Color3.fromRGB(20, 20, 25),
-		surface = Color3.fromRGB(30, 30, 38),
-		text = Color3.new(1, 1, 1),
-		accent = Color3.fromRGB(30, 144, 255),
-		border = Color3.fromRGB(50, 50, 60),
-	},
-	neon = {
-		bg = Color3.fromRGB(10, 0, 20),
-		surface = Color3.fromRGB(20, 0, 40),
-		text = Color3.fromRGB(0, 255, 255),
-		accent = Color3.fromRGB(255, 0, 200),
-		border = Color3.fromRGB(255, 0, 200),
-	},
-	pastel = {
-		bg = Color3.fromRGB(40, 35, 45),
-		surface = Color3.fromRGB(55, 50, 60),
-		text = Color3.fromRGB(255, 200, 210),
-		accent = Color3.fromRGB(255, 180, 200),
-		border = Color3.fromRGB(255, 200, 210),
-	},
-	professional = {
-		bg = Color3.fromRGB(20, 25, 30),
-		surface = Color3.fromRGB(35, 40, 48),
-		text = Color3.new(1, 1, 1),
-		accent = Color3.fromRGB(52, 152, 219),
-		border = Color3.fromRGB(60, 65, 75),
-	},
-	gaming = {
-		bg = Color3.fromRGB(10, 10, 10),
-		surface = Color3.fromRGB(25, 0, 0),
-		text = Color3.fromRGB(0, 255, 0),
-		accent = Color3.fromRGB(255, 0, 0),
-		border = Color3.fromRGB(255, 0, 0),
-	},
-}
-
--- ============================================
--- SHAPE SYSTEM
--- ============================================
-local shapes = {
-	pill = { slice = Rect.new(25, 25, 25, 25), radius = 50 },
-	square = { slice = Rect.new(0, 0, 0, 0), radius = 0 },
-	rounded = { slice = Rect.new(8, 8, 8, 8), radius = 8 },
-	circle = { slice = Rect.new(50, 50, 50, 50), radius = 100 },
-}
-
--- ============================================
--- SIZE HIERARCHY
--- ============================================
-local sizes = {
-	xs = 12,
-	sm = 16,
-	md = 24,
-	lg = 32,
-	xl = 48,
-}
-
--- ============================================
--- SPACING SYSTEM
--- ============================================
-local spacing = {
-	tiny = 4,
-	small = 8,
-	medium = 12,
-	large = 20,
-	huge = 32,
-	massive = 48,
-}
-
--- ============================================
--- RAINBOW SYSTEM
--- ============================================
-local rainbow_elements = {}
+local rainbow_offset = 0
 
 local function getRainbowColor(offset)
 	offset = offset or 0
-	local hue = (tick() * 0.1 + offset) % 1
+	local hue = (rainbow_offset + offset) % 1
 	return Color3.fromHSV(hue, 1, 1)
 end
 
-local function applyRainbowStroke(element, style)
-	style = style or "pulse"
+-- Rainbow update loop - ALWAYS RUNNING
+coroutine.wrap(function()
+	while true do
+		rainbow_offset = (rainbow_offset + 0.008) % 1
+		RS.Heartbeat:Wait()
+	end
+end)()
+
+-- ============================================
+-- RAINBOW STROKE - MOVING WAVE
+-- ============================================
+local function applyRainbowStroke(element, thickness)
+	thickness = thickness or 2
 	
-	local stroke = Instance.new("UIStroke")
-	stroke.Parent = element
-	stroke.Thickness = 2
-	stroke.Transparency = 0.3
-	stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	
-	local function updateRainbow()
-		while element and element.Parent do
-			local hue = (tick() * 0.1) % 1
-			if style == "pulse" then
-				local brightness = 0.5 + 0.5 * math.sin(tick() * 3)
-				stroke.Color = Color3.fromHSV(hue, 1, brightness)
-			elseif style == "spin" then
-				stroke.Color = Color3.fromHSV((hue + 0.5) % 1, 1, 1)
-			elseif style == "gradient" then
-				-- Gradient handled differently
-			end
-			RS.Heartbeat:Wait()
+	for _, child in ipairs(element:GetChildren()) do
+		if child:IsA("UIStroke") then
+			child:Destroy()
 		end
 	end
 	
-	coroutine.wrap(updateRainbow)()
+	local stroke = Instance.new("UIStroke")
+	stroke.Parent = element
+	stroke.Thickness = thickness
+	stroke.Transparency = 0.3
+	stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	stroke.Color = Color3.fromHSV(0, 1, 1)
+	
+	coroutine.wrap(function()
+		while stroke and stroke.Parent do
+			stroke.Color = Color3.fromHSV(rainbow_offset, 1, 1)
+			RS.Heartbeat:Wait()
+		end
+	end)()
+	
 	return stroke
+end
+
+-- ============================================
+-- CORNER RADIUS SYSTEM
+-- ============================================
+local corner_radius = 8
+
+local function setCornerRadius(element, radius)
+	if element:IsA("ImageLabel") or element:IsA("ImageButton") then
+		element.SliceCenter = Rect.new(radius, radius, radius, radius)
+	end
 end
 
 -- ============================================
@@ -1016,7 +962,7 @@ local function gMouse()
 end
 
 -- ============================================
--- ENHANCED RIPPLE WITH RAINBOW
+-- RIPPLE WITH MOVING RAINBOW
 -- ============================================
 local function ripple(button, x, y, rainbow)
 	spawn(function()
@@ -1027,10 +973,12 @@ local function ripple(button, x, y, rainbow)
 		circle.ZIndex = 1000
 		
 		if rainbow then
-			circle.ImageColor3 = getRainbowColor()
+			local startOffset = rainbow_offset
 			coroutine.wrap(function()
+				local offset = 0
 				while circle and circle.Parent do
-					circle.ImageColor3 = getRainbowColor()
+					circle.ImageColor3 = Color3.fromHSV((startOffset + offset) % 1, 1, 1)
+					offset = offset + 0.02
 					RS.Heartbeat:Wait()
 				end
 			end)()
@@ -1058,7 +1006,7 @@ local function ripple(button, x, y, rainbow)
 end
 
 -- ============================================
--- ENHANCED HOVER EFFECTS
+-- HOVER EFFECT
 -- ============================================
 local function applyHover(element, scale)
 	scale = scale or 1.05
@@ -1072,31 +1020,6 @@ local function applyHover(element, scale)
 			Size = element.Size / scale
 		}):Play()
 	end)
-end
-
--- ============================================
--- APPLY THEME TO ELEMENT
--- ============================================
-local function applyThemeToElement(element, theme_name)
-	local theme = themes[theme_name] or themes.dark
-	if element:IsA("ImageLabel") or element:IsA("Frame") then
-		if element.Name ~= "Bar" and element.Name ~= "Base" and element.Name ~= "Top" then
-			element.ImageColor3 = theme.surface
-		end
-	end
-	if element:IsA("TextLabel") or element:IsA("TextBox") or element:IsA("TextButton") then
-		element.TextColor3 = theme.text
-	end
-end
-
--- ============================================
--- APPLY SHAPE
--- ============================================
-local function applyShape(element, shape_name)
-	local shape = shapes[shape_name] or shapes.rounded
-	if element:IsA("ImageLabel") or element:IsA("ImageButton") then
-		element.SliceCenter = shape.slice
-	end
 end
 
 -- ============================================
@@ -1127,57 +1050,21 @@ function library:FormatWindows()
 	format_windows()
 end
 
-function library:SetTheme(theme_name)
-	ui_options.theme = theme_name
-	local theme = themes[theme_name] or themes.dark
-	ui_options.main_color = theme.accent
-	-- Update all existing windows
-	for _, window in ipairs(Windows:GetChildren()) do
-		if window:IsA("ImageLabel") and window.Name == "Window" then
-			window.ImageColor3 = theme.bg
-			local bar = window:FindFirstChild("Bar")
-			if bar then
-				bar.BackgroundColor3 = theme.accent
-				local base = bar:FindFirstChild("Base")
-				if base then
-					base.BackgroundColor3 = theme.accent
-					base.ImageColor3 = theme.accent
-				end
-				local top = bar:FindFirstChild("Top")
-				if top then
-					top.ImageColor3 = theme.accent
-				end
-			end
-			local title = window:FindFirstChild("Title")
-			if title then
-				title.TextColor3 = theme.text
-			end
-		end
-	end
-end
-
-function library:SetShape(shape_name)
-	ui_options.shape = shape_name
-	-- Update prefabs
-	for _, v in ipairs(Prefabs:GetChildren()) do
-		if v:IsA("ImageLabel") or v:IsA("ImageButton") then
-			applyShape(v, shape_name)
-		end
-	end
-end
-
 function library:SetCornerRadius(radius)
-	ui_options.corner_radius = radius
-	local slice = Rect.new(radius, radius, radius, radius)
+	corner_radius = radius or 8
 	for _, v in ipairs(Prefabs:GetChildren()) do
 		if v:IsA("ImageLabel") or v:IsA("ImageButton") then
-			v.SliceCenter = slice
+			setCornerRadius(v, corner_radius)
 		end
 	end
+end
+
+function library:GetCornerRadius()
+	return corner_radius
 end
 
 -- ============================================
--- ENHANCED ADDWINDOW
+-- ADDWINDOW
 -- ============================================
 function library:AddWindow(title, options)
 	windows = windows + 1
@@ -1192,10 +1079,8 @@ function library:AddWindow(title, options)
 	Window.Size = UDim2.new(0, options.min_size.X, 0, options.min_size.Y)
 	Window.ZIndex = Window.ZIndex + (windows * 10)
 	
-	-- Apply theme
-	local theme = themes[options.theme] or themes.dark
-	Window.ImageColor3 = theme.bg
-	Window:FindFirstChild("Title").TextColor3 = theme.text
+	-- Apply corner radius
+	setCornerRadius(Window, corner_radius)
 
 	do -- Altering Window Color
 		local Title = Window:FindFirstChild("Title")
@@ -1218,16 +1103,6 @@ function library:AddWindow(title, options)
 				Base.ImageColor3 = options.main_color
 				Top.ImageColor3 = options.main_color
 				SplitFrame.BackgroundColor3 = options.main_color
-				
-				-- Rainbow glow if enabled
-				if checks.rainbow then
-					local rainbow = getRainbowColor()
-					Bar.BackgroundColor3 = rainbow
-					Base.BackgroundColor3 = rainbow
-					Base.ImageColor3 = rainbow
-					Top.ImageColor3 = rainbow
-					SplitFrame.BackgroundColor3 = rainbow
-				end
 
 				RS.Heartbeat:Wait()
 			end
@@ -1359,8 +1234,7 @@ function library:AddWindow(title, options)
 				new_button.ZIndex = new_button.ZIndex + (windows * 10)
 				new_button:GetChildren()[1].ZIndex = new_button:GetChildren()[1].ZIndex + (windows * 10)
 				
-				-- Apply shape
-				applyShape(new_button, options.shape)
+				setCornerRadius(new_button, corner_radius)
 
 				local new_tab = Prefabs:FindFirstChild("Tab"):Clone()
 				new_tab.Parent = tabs
@@ -1382,11 +1256,8 @@ function library:AddWindow(title, options)
 					new_button:GetChildren()[1].ImageColor3 = Color3.fromRGB(73, 75, 79)
 					new_tab.Visible = true
 					
-					-- Rainbow highlight on active tab
-					if checks.rainbow then
-						local stroke = applyRainbowStroke(new_button, "pulse")
-						stroke.Thickness = 2
-					end
+					-- RAINBOW BORDER ON ACTIVE TAB (always on)
+					applyRainbowStroke(new_button, 2)
 				end
 
 				new_button.MouseButton1Click:Connect(function()
@@ -1407,7 +1278,6 @@ function library:AddWindow(title, options)
 						label.Text = label_text
 						label.Size = UDim2.new(0, gNameLen(label), 0, 20)
 						label.ZIndex = label.ZIndex + (windows * 10)
-						applyThemeToElement(label, options.theme)
 
 						return label
 					end
@@ -1425,19 +1295,13 @@ function library:AddWindow(title, options)
 						button.ZIndex = button.ZIndex + (windows * 10)
 						button:GetChildren()[1].ZIndex = button:GetChildren()[1].ZIndex + (windows * 10)
 						
-						-- Apply shape
-						applyShape(button, options.shape)
-						
-						-- Apply hover effect
+						setCornerRadius(button, corner_radius)
 						applyHover(button, 1.05)
 
 						spawn(function()
 							while true do
 								if button and button:GetChildren()[1] then
 									button:GetChildren()[1].ImageColor3 = options.main_color
-									if checks.rainbow then
-										button:GetChildren()[1].ImageColor3 = getRainbowColor()
-									end
 								end
 								RS.Heartbeat:Wait()
 							end
@@ -1445,7 +1309,6 @@ function library:AddWindow(title, options)
 
 						button.MouseButton1Click:Connect(function()
 							ripple(button, mouse.X, mouse.Y, rainbow_ripple)
-							-- Squish animation
 							TweenService:Create(button, TweenInfo.new(0.15, Enum.EasingStyle.Quad), {
 								Size = UDim2.new(0, button.AbsoluteSize.X * 0.95, 0, button.AbsoluteSize.Y * 0.95)
 							}):Play()
@@ -1459,7 +1322,7 @@ function library:AddWindow(title, options)
 						return button
 					end
 
-					function tab_data:AddSwitch(switch_text, callback, rainbow_on)
+					function tab_data:AddToggle(switch_text, callback, rainbow_on)
 						local switch_data = {}
 
 						switch_text = tostring(switch_text or "New Switch")
@@ -1475,16 +1338,12 @@ function library:AddWindow(title, options)
 						switch.ZIndex = switch.ZIndex + (windows * 10)
 						switch:GetChildren()[1].ZIndex = switch:GetChildren()[1].ZIndex + (windows * 10)
 						
-						-- Apply shape
-						applyShape(switch, options.shape)
+						setCornerRadius(switch, corner_radius)
 
 						spawn(function()
 							while true do
 								if switch and switch:GetChildren()[1] then
 									switch:GetChildren()[1].ImageColor3 = options.main_color
-									if checks.rainbow and rainbow_on then
-										switch:GetChildren()[1].ImageColor3 = getRainbowColor()
-									end
 								end
 								RS.Heartbeat:Wait()
 							end
@@ -1496,10 +1355,15 @@ function library:AddWindow(title, options)
 							switch.Text = toggled and utf8.char(10003) or ""
 							pcall(callback, toggled)
 							
-							-- Rainbow glow when on
-							if toggled and rainbow_on then
-								local stroke = applyRainbowStroke(switch, "pulse")
-								stroke.Thickness = 3
+							-- RAINBOW BORDER WHEN ON (always flowing)
+							if toggled then
+								applyRainbowStroke(switch, 3)
+							else
+								for _, child in ipairs(switch:GetChildren()) do
+									if child:IsA("UIStroke") then
+										child:Destroy()
+									end
+								end
 							end
 						end)
 
@@ -1507,13 +1371,18 @@ function library:AddWindow(title, options)
 							toggled = (typeof(bool) == "boolean") and bool or false
 							switch.Text = toggled and utf8.char(10003) or ""
 							pcall(callback,toggled)
+							if toggled then
+								applyRainbowStroke(switch, 3)
+							else
+								for _, child in ipairs(switch:GetChildren()) do
+									if child:IsA("UIStroke") then
+										child:Destroy()
+									end
+								end
+							end
 						end
 
 						return switch_data, switch
-					end
-
-					function tab_data:AddToggle(switch_text, callback, rainbow_on)
-						return tab_data:AddSwitch(switch_text, callback, rainbow_on)
 					end
 
 					function tab_data:AddTextBox(textbox_text, callback, textbox_options)
@@ -1531,9 +1400,7 @@ function library:AddWindow(title, options)
 						textbox.ZIndex = textbox.ZIndex + (windows * 10)
 						textbox:GetChildren()[1].ZIndex = textbox:GetChildren()[1].ZIndex + (windows * 10)
 						
-						-- Apply shape
-						applyShape(textbox, options.shape)
-						applyThemeToElement(textbox, options.theme)
+						setCornerRadius(textbox, corner_radius)
 
 						textbox.FocusLost:Connect(function(ep)
 							if ep then
@@ -1566,8 +1433,7 @@ function library:AddWindow(title, options)
 						slider.Parent = new_tab
 						slider.ZIndex = slider.ZIndex + (windows * 10)
 						
-						-- Apply shape
-						applyShape(slider, options.shape)
+						setCornerRadius(slider, corner_radius)
 
 						local title = slider:FindFirstChild("Title")
 						local indicator = slider:FindFirstChild("Indicator")
@@ -1624,12 +1490,8 @@ function library:AddWindow(title, options)
 												value.Text = tostring(sel_value)
 												pcall(callback, sel_value)
 												
-												-- Rainbow indicator
-												if checks.rainbow then
-													indicator.ImageColor3 = getRainbowColor()
-												else
-													indicator.ImageColor3 = options.main_color
-												end
+												-- RAINBOW INDICATOR (always flowing)
+												indicator.ImageColor3 = Color3.fromHSV(rainbow_offset, 1, 1)
 
 												RS.Heartbeat:Wait()
 											end
@@ -1684,8 +1546,7 @@ function library:AddWindow(title, options)
 						input:GetChildren()[1].ZIndex = input:GetChildren()[1].ZIndex + (windows * 10)
 						title.ZIndex = title.ZIndex + (windows * 10)
 						
-						-- Apply shape
-						applyShape(keybind, options.shape)
+						setCornerRadius(keybind, corner_radius)
 
 						keybind.Parent = new_tab
 						title.Text = "  " .. keybind_name
@@ -1749,8 +1610,7 @@ function library:AddWindow(title, options)
 						indicator.ZIndex = indicator.ZIndex + (windows * 10)
 						dropdown:GetChildren()[3].ZIndex = dropdown:GetChildren()[3].ZIndex + (windows * 10)
 						
-						-- Apply shape
-						applyShape(dropdown, options.shape)
+						setCornerRadius(dropdown, corner_radius)
 
 						dropdown.Parent = new_tab
 						dropdown.Text = "      " .. dropdown_name
@@ -1789,14 +1649,10 @@ function library:AddWindow(title, options)
 							object.Text = n
 							object.ZIndex = object.ZIndex + (windows * 10)
 							
-							-- Apply shape
-							applyShape(object, options.shape)
+							setCornerRadius(object, corner_radius)
 
 							object.MouseEnter:Connect(function()
 								object.BackgroundColor3 = options.main_color
-								if checks.rainbow then
-									object.BackgroundColor3 = getRainbowColor()
-								end
 							end)
 							object.MouseLeave:Connect(function()
 								object.BackgroundColor3 = Color3.fromRGB(33, 34, 36)
@@ -1841,8 +1697,7 @@ function library:AddWindow(title, options)
 						color_picker.Parent = new_tab
 						color_picker.ZIndex = color_picker.ZIndex + (windows * 10)
 						
-						-- Apply shape
-						applyShape(color_picker, options.shape)
+						setCornerRadius(color_picker, corner_radius)
 
 						local palette = color_picker:FindFirstChild("Palette")
 						local sample = color_picker:FindFirstChild("Sample")
@@ -1962,8 +1817,7 @@ function library:AddWindow(title, options)
 						console.ZIndex = console.ZIndex + (windows * 10)
 						console.Size = UDim2.new(1, 0, console_options.full and 1 or 0, console_options.y)
 						
-						-- Apply shape
-						applyShape(console, options.shape)
+						setCornerRadius(console, corner_radius)
 
 						local sf = console:GetChildren()[1]
 						local Source = sf:FindFirstChild("Source")
@@ -2337,16 +2191,12 @@ function library:AddWindow(title, options)
 						folder.Parent = new_tab
 						button.Text = "      " .. folder_name
 						
-						-- Apply shape
-						applyShape(folder, options.shape)
+						setCornerRadius(folder, corner_radius)
 
 						spawn(function()
 							while true do
 								if button and button:GetChildren()[1] then
 									button:GetChildren()[1].ImageColor3 = options.main_color
-									if checks.rainbow and rainbow_border then
-										button:GetChildren()[1].ImageColor3 = getRainbowColor()
-									end
 								end
 								RS.Heartbeat:Wait()
 							end
@@ -2374,10 +2224,15 @@ function library:AddWindow(title, options)
 
 							open = not open
 							
-							-- Rainbow border when open
+							-- RAINBOW BORDER WHEN OPEN (always flowing)
 							if open and rainbow_border then
-								local stroke = applyRainbowStroke(folder, "pulse")
-								stroke.Thickness = 2
+								applyRainbowStroke(folder, 2)
+							else
+								for _, child in ipairs(folder:GetChildren()) do
+									if child:IsA("UIStroke") then
+										child:Destroy()
+									end
+								end
 							end
 						end)
 
@@ -2424,13 +2279,6 @@ function library:AddWindow(title, options)
 	end
 
 	return window_data, Window
-end
-
--- ============================================
--- RAINBOW TOGGLE
--- ============================================
-function library:ToggleRainbow(enabled)
-	checks.rainbow = enabled or false
 end
 
 return library
