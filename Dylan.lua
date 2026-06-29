@@ -1,15 +1,5 @@
 -- ============================================
--- 🚀 ELERIUM ULTRA - Next-Gen UI Library
--- ============================================
--- Features:
--- ✅ Spring physics (bouncy animations)
--- ✅ Layout animations (enter/exit)
--- ✅ Gesture composability (drag/swipe)
--- ✅ Motion values (60fps drivers)
--- ✅ Shared element transitions
--- ✅ Variants + stagger animations
--- ✅ AnimatePresence
--- ✅ Label images
+-- 🚀 ELERIUM ULTRA - COMPLETE FIXED LIBRARY
 -- ============================================
 
 -- ============================================
@@ -22,7 +12,7 @@ local ui_options = {
     surface_color = Color3.fromRGB(28, 28, 42),
     text_color = Color3.fromRGB(240, 240, 255),
     text_muted = Color3.fromRGB(160, 160, 180),
-    min_size = Vector2.new(520, 520),
+    min_size = Vector2.new(400, 300),
     toggle_key = Enum.KeyCode.RightShift,
     can_resize = true,
     spring_stiffness = 120,
@@ -31,324 +21,24 @@ local ui_options = {
 }
 
 -- ============================================
--- 🎯 MOTION VALUES (60fps animation driver)
+-- 🎯 SERVICES
 -- ============================================
-local Motion = {}
-Motion.__index = Motion
-
-function Motion.new(initial)
-    local self = setmetatable({}, Motion)
-    self.value = initial or 0
-    self.target = self.value
-    self.velocity = 0
-    self.listeners = {}
-    self._conn = nil
-    return self
-end
-
-function Motion:Spring(target, stiffness, damping)
-    stiffness = stiffness or ui_options.spring_stiffness
-    damping = damping or ui_options.spring_damping
-    self.target = target
-    
-    if not self._conn then
-        self._conn = game:GetService("RunService").Heartbeat:Connect(function(dt)
-            local error = self.target - self.value
-            local force = error * stiffness
-            self.velocity = self.velocity + force * dt
-            self.velocity = self.velocity * (1 - damping * dt)
-            self.value = self.value + self.velocity * dt
-            
-            for _, cb in pairs(self.listeners) do
-                cb(self.value)
-            end
-        end)
-    end
-    
-    return self
-end
-
-function Motion:OnChange(callback)
-    table.insert(self.listeners, callback)
-    return self
-end
-
-function Motion:Stop()
-    if self._conn then
-        self._conn:Disconnect()
-        self._conn = nil
-    end
-end
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RS = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
 
 -- ============================================
--- 🎬 ANIMATE PRESENCE (enter/exit animations)
--- ============================================
-local function AnimatePresence(object, visible, config)
-    config = config or {}
-    local duration = config.duration or ui_options.animation_duration
-    local scale = config.scale or 0.8
-    local fade = config.fade ~= false
-    local spring = config.spring or false
-    
-    if visible then
-        object.Visible = true
-        
-        if spring then
-            -- Use spring physics
-            local sizeX = Motion.new(object.AbsoluteSize.X * scale)
-            local sizeY = Motion.new(object.AbsoluteSize.Y * scale)
-            local opacity = Motion.new(fade and 1 or 0)
-            
-            sizeX:Spring(object.AbsoluteSize.X):OnChange(function(v)
-                object.Size = UDim2.new(0, v, 0, object.Size.Y.Offset)
-            end)
-            sizeY:Spring(object.AbsoluteSize.Y):OnChange(function(v)
-                object.Size = UDim2.new(0, object.Size.X.Offset, 0, v)
-            end)
-            if fade then
-                opacity:Spring(0):OnChange(function(v)
-                    object.BackgroundTransparency = v
-                    if object:IsA("ImageLabel") then
-                        object.ImageTransparency = v
-                    end
-                end)
-            end
-        else
-            -- Use tween
-            object.Size = UDim2.new(0, object.AbsoluteSize.X * scale, 0, object.AbsoluteSize.Y * scale)
-            if fade then object.BackgroundTransparency = 1 end
-            
-            TweenService:Create(object, TweenInfo.new(duration, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-                Size = UDim2.new(0, object.AbsoluteSize.X, 0, object.AbsoluteSize.Y),
-                BackgroundTransparency = 0,
-                ImageTransparency = 0,
-            }):Play()
-        end
-    else
-        if spring then
-            local sizeX = Motion.new(object.AbsoluteSize.X)
-            local sizeY = Motion.new(object.AbsoluteSize.Y)
-            local opacity = Motion.new(fade and 0 or 0)
-            
-            sizeX:Spring(object.AbsoluteSize.X * scale):OnChange(function(v)
-                object.Size = UDim2.new(0, v, 0, object.Size.Y.Offset)
-            end)
-            sizeY:Spring(object.AbsoluteSize.Y * scale):OnChange(function(v)
-                object.Size = UDim2.new(0, object.Size.X.Offset, 0, v)
-            end)
-            if fade then
-                opacity:Spring(1):OnChange(function(v)
-                    object.BackgroundTransparency = v
-                    if object:IsA("ImageLabel") then
-                        object.ImageTransparency = v
-                    end
-                end)
-            end
-            
-            task.wait(duration)
-            object.Visible = false
-        else
-            local tween = TweenService:Create(object, TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-                Size = UDim2.new(0, object.AbsoluteSize.X * scale, 0, object.AbsoluteSize.Y * scale),
-                BackgroundTransparency = 1,
-                ImageTransparency = 1,
-            })
-            tween:Play()
-            tween.Completed:Connect(function()
-                object.Visible = false
-            end)
-        end
-    end
-end
-
--- ============================================
--- 🖐️ GESTURE COMPOSABILITY
--- ============================================
-local Gesture = {}
-Gesture.__index = Gesture
-
-function Gesture.new(object)
-    local self = setmetatable({}, Gesture)
-    self.object = object
-    self.dragging = false
-    self.swiping = false
-    self.startPos = nil
-    self.startMouse = nil
-    self.listeners = {
-        onDrag = {},
-        onSwipe = {},
-        onPinch = {},
-    }
-    
-    -- Drag detection
-    object.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            self.dragging = true
-            self.startPos = object.Position
-            self.startMouse = UIS:GetMouseLocation()
-        end
-    end)
-    
-    object.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            self.dragging = false
-            
-            -- Detect swipe
-            local endMouse = UIS:GetMouseLocation()
-            local delta = endMouse - self.startMouse
-            if delta.Magnitude > 50 then
-                self.swiping = true
-                for _, cb in pairs(self.listeners.onSwipe) do
-                    cb(delta)
-                end
-                self.swiping = false
-            end
-        end
-    end)
-    
-    -- Track drag
-    game:GetService("RunService").Heartbeat:Connect(function()
-        if self.dragging then
-            local currentMouse = UIS:GetMouseLocation()
-            local delta = currentMouse - self.startMouse
-            for _, cb in pairs(self.listeners.onDrag) do
-                cb(delta)
-            end
-        end
-    end)
-    
-    return self
-end
-
-function Gesture:OnDrag(callback)
-    table.insert(self.listeners.onDrag, callback)
-    return self
-end
-
-function Gesture:OnSwipe(callback)
-    table.insert(self.listeners.onSwipe, callback)
-    return self
-end
-
--- ============================================
--- 🎨 LABEL IMAGE (text + icon combo)
--- ============================================
-local function CreateLabelImage(parent, text, icon, config)
-    config = config or {}
-    local frame = Instance.new("Frame")
-    frame.Name = "LabelImage"
-    frame.Parent = parent
-    frame.BackgroundColor3 = Color3.new(1, 1, 1)
-    frame.BackgroundTransparency = 1
-    frame.Size = UDim2.new(1, 0, 0, config.height or 24)
-    frame.ClipsDescendants = true
-    
-    -- Icon
-    local iconLabel = Instance.new("ImageLabel")
-    iconLabel.Name = "Icon"
-    iconLabel.Parent = frame
-    iconLabel.Size = UDim2.new(0, 20, 0, 20)
-    iconLabel.Position = UDim2.new(0, 0, 0.5, -10)
-    iconLabel.BackgroundColor3 = Color3.new(1, 1, 1)
-    iconLabel.BackgroundTransparency = 1
-    iconLabel.Image = icon or ""
-    iconLabel.ImageColor3 = config.iconColor or ui_options.accent_color
-    
-    -- Text
-    local textLabel = Instance.new("TextLabel")
-    textLabel.Name = "Text"
-    textLabel.Parent = frame
-    textLabel.Size = UDim2.new(1, -30, 1, 0)
-    textLabel.Position = UDim2.new(0, 25, 0, 0)
-    textLabel.BackgroundColor3 = Color3.new(1, 1, 1)
-    textLabel.BackgroundTransparency = 1
-    textLabel.Font = Enum.Font.GothamSemibold
-    textLabel.Text = text or "Label"
-    textLabel.TextColor3 = config.textColor or ui_options.text_color
-    textLabel.TextSize = config.textSize or 14
-    textLabel.TextXAlignment = Enum.TextXAlignment.Left
-    
-    return frame
-end
-
--- ============================================
--- 🎬 VARIANTS + STAGGER
--- ============================================
-local function Stagger(parent, children, config)
-    config = config or {}
-    local staggerDelay = config.staggerDelay or 0.05
-    local duration = config.duration or 0.3
-    local scale = config.scale or 0.9
-    
-    for i, child in pairs(children) do
-        task.wait(staggerDelay)
-        
-        -- Variant: different animations based on index
-        local variant = config.variants and config.variants[i % #config.variants + 1] or "fade"
-        
-        child.Visible = true
-        child.Size = UDim2.new(0, child.AbsoluteSize.X * scale, 0, child.AbsoluteSize.Y * scale)
-        child.BackgroundTransparency = 1
-        
-        local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
-        local properties = {
-            Size = UDim2.new(0, child.AbsoluteSize.X, 0, child.AbsoluteSize.Y),
-            BackgroundTransparency = 0,
-        }
-        
-        if variant == "slide_left" then
-            child.Position = UDim2.new(0, -50, 0, 0)
-            properties.Position = UDim2.new(0, 0, 0, 0)
-        elseif variant == "slide_right" then
-            child.Position = UDim2.new(0, 50, 0, 0)
-            properties.Position = UDim2.new(0, 0, 0, 0)
-        elseif variant == "slide_up" then
-            child.Position = UDim2.new(0, 0, 0, 50)
-            properties.Position = UDim2.new(0, 0, 0, 0)
-        elseif variant == "scale" then
-            properties.Size = UDim2.new(0, child.AbsoluteSize.X, 0, child.AbsoluteSize.Y)
-        end
-        
-        TweenService:Create(child, tweenInfo, properties):Play()
-    end
-end
-
--- ============================================
--- 🔄 SHARED ELEMENT TRANSITIONS
--- ============================================
-local SharedElement = {}
-SharedElement.__index = SharedElement
-
-function SharedElement.new(source, target, config)
-    config = config or {}
-    local duration = config.duration or 0.4
-    
-    -- Clone source element
-    local clone = source:Clone()
-    clone.Parent = source.Parent
-    clone.ZIndex = 1000
-    
-    -- Position clone over source
-    clone.Position = UDim2.new(0, source.AbsolutePosition.X, 0, source.AbsolutePosition.Y)
-    clone.Size = UDim2.new(0, source.AbsoluteSize.X, 0, source.AbsoluteSize.Y)
-    
-    -- Tween to target position
-    TweenService:Create(clone, TweenInfo.new(duration, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {
-        Position = UDim2.new(0, target.AbsolutePosition.X, 0, target.AbsolutePosition.Y),
-        Size = UDim2.new(0, target.AbsoluteSize.X, 0, target.AbsoluteSize.Y),
-    }):Play()
-    
-    task.wait(duration)
-    clone:Destroy()
-end
-
--- ============================================
--- 🏗️ BUILD UI
+-- 🏗️ CREATE SCREENGUI
 -- ============================================
 local imgui = Instance.new("ScreenGui")
 imgui.Name = "imgui"
-imgui.Parent = game:GetService("CoreGui")
+imgui.Parent = CoreGui
+imgui.Enabled = true
 
+-- ============================================
+-- 🏗️ PREFABS CONTAINER
+-- ============================================
 local Prefabs = Instance.new("Frame")
 Prefabs.Name = "Prefabs"
 Prefabs.Parent = imgui
@@ -357,7 +47,25 @@ Prefabs.Size = UDim2.new(0, 100, 0, 100)
 Prefabs.Visible = false
 
 -- ============================================
--- 🪟 GLASS WINDOW WITH SPRING PHYSICS
+-- 🎨 HELPER: Create Rounded Image
+-- ============================================
+local function createRoundedImage(parent, name, color, transparency)
+    local image = Instance.new("ImageLabel")
+    image.Name = name
+    image.Parent = parent
+    image.BackgroundColor3 = Color3.new(1, 1, 1)
+    image.BackgroundTransparency = 1
+    image.Size = UDim2.new(1, 0, 1, 0)
+    image.Image = "rbxassetid://2851929490"
+    image.ImageColor3 = color or Color3.fromRGB(40, 40, 60)
+    image.ImageTransparency = transparency or 0.3
+    image.ScaleType = Enum.ScaleType.Slice
+    image.SliceCenter = Rect.new(4, 4, 4, 4)
+    return image
+end
+
+-- ============================================
+-- 🪟 WINDOW TEMPLATE
 -- ============================================
 local Window = Instance.new("ImageLabel")
 Window.Name = "Window"
@@ -368,14 +76,14 @@ Window.BackgroundColor3 = Color3.new(1, 1, 1)
 Window.BackgroundTransparency = 0.15
 Window.ClipsDescendants = true
 Window.Position = UDim2.new(0, 20, 0, 20)
-Window.Size = UDim2.new(0, 200, 0, 200)
+Window.Size = UDim2.new(0, 400, 0, 300)
 Window.Image = "rbxassetid://2851926732"
 Window.ImageColor3 = ui_options.bg_color
 Window.ImageTransparency = 0.1
 Window.ScaleType = Enum.ScaleType.Slice
 Window.SliceCenter = Rect.new(12, 12, 12, 12)
 
--- Glow border
+-- Window glow border
 local WindowGlow = Instance.new("ImageLabel")
 WindowGlow.Name = "GlowBorder"
 WindowGlow.Parent = Window
@@ -391,7 +99,7 @@ WindowGlow.ScaleType = Enum.ScaleType.Slice
 WindowGlow.SliceCenter = Rect.new(12, 12, 12, 12)
 
 -- ============================================
--- 📐 RESIZER WITH GESTURE
+-- 📐 RESIZER
 -- ============================================
 local Resizer = Instance.new("Frame")
 Resizer.Name = "Resizer"
@@ -425,7 +133,6 @@ Bar.BorderSizePixel = 0
 Bar.Position = UDim2.new(0, 0, 0, 5)
 Bar.Size = UDim2.new(1, 0, 0, 22)
 
--- Gradient overlay
 local BarGradient = Instance.new("ImageLabel")
 BarGradient.Name = "Gradient"
 BarGradient.Parent = Bar
@@ -439,7 +146,35 @@ BarGradient.ZIndex = 0
 BarGradient.ScaleType = Enum.ScaleType.Slice
 BarGradient.SliceCenter = Rect.new(8, 8, 8, 8)
 
--- Title
+local Top = Instance.new("ImageLabel")
+Top.Name = "Top"
+Top.Parent = Bar
+Top.BackgroundColor3 = Color3.new(1, 1, 1)
+Top.BackgroundTransparency = 1
+Top.Position = UDim2.new(0, 0, 0, -5)
+Top.Size = UDim2.new(1, 0, 0, 10)
+Top.Image = "rbxassetid://2851926732"
+Top.ImageColor3 = ui_options.main_color
+Top.ImageTransparency = 0.3
+Top.ScaleType = Enum.ScaleType.Slice
+Top.SliceCenter = Rect.new(12, 12, 12, 12)
+
+local Base = Instance.new("ImageLabel")
+Base.Name = "Base"
+Base.Parent = Bar
+Base.BackgroundColor3 = Color3.new(1, 1, 1)
+Base.BackgroundTransparency = 1
+Base.Position = UDim2.new(0, 0, 0.8, 0)
+Base.Size = UDim2.new(1, 0, 0, 10)
+Base.Image = "rbxassetid://2851926732"
+Base.ImageColor3 = ui_options.main_color
+Base.ImageTransparency = 0.4
+Base.ScaleType = Enum.ScaleType.Slice
+Base.SliceCenter = Rect.new(12, 12, 12, 12)
+
+-- ============================================
+-- 📝 WINDOW TITLE
+-- ============================================
 local Title = Instance.new("TextLabel")
 Title.Name = "Title"
 Title.Parent = Window
@@ -454,7 +189,22 @@ Title.TextSize = 15
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
 -- ============================================
--- 📑 TABS
+-- 🔽 MINIMIZE TOGGLE
+-- ============================================
+local Toggle = Instance.new("ImageButton")
+Toggle.Name = "Toggle"
+Toggle.Parent = Bar
+Toggle.BackgroundColor3 = Color3.new(1, 1, 1)
+Toggle.BackgroundTransparency = 1
+Toggle.Position = UDim2.new(0, 5, 0, -1)
+Toggle.Size = UDim2.new(0, 24, 0, 24)
+Toggle.ZIndex = 2
+Toggle.Image = "rbxassetid://89566385300354"
+Toggle.ImageColor3 = Color3.fromRGB(255, 255, 255)
+Toggle.ImageTransparency = 0.6
+
+-- ============================================
+-- 📑 TAB SELECTION
 -- ============================================
 local TabSelection = Instance.new("ImageLabel")
 TabSelection.Name = "TabSelection"
@@ -468,6 +218,7 @@ TabSelection.ImageColor3 = Color3.fromRGB(30, 30, 50)
 TabSelection.ImageTransparency = 0.3
 TabSelection.ScaleType = Enum.ScaleType.Slice
 TabSelection.SliceCenter = Rect.new(4, 4, 4, 4)
+TabSelection.Visible = false
 
 local GlowLine = Instance.new("ImageLabel")
 GlowLine.Name = "GlowLine"
@@ -496,6 +247,9 @@ TabList.FillDirection = Enum.FillDirection.Horizontal
 TabList.SortOrder = Enum.SortOrder.LayoutOrder
 TabList.Padding = UDim.new(0, 4)
 
+-- ============================================
+-- 📦 TABS CONTAINER
+-- ============================================
 local Tabs = Instance.new("Frame")
 Tabs.Name = "Tabs"
 Tabs.Parent = Window
@@ -536,25 +290,10 @@ TabButton.Text = "Tab"
 TabButton.TextColor3 = Color3.fromRGB(200, 200, 220)
 TabButton.TextSize = 13
 
-local function createRoundedImage(parent, name, color, transparency)
-    local image = Instance.new("ImageLabel")
-    image.Name = name
-    image.Parent = parent
-    image.BackgroundColor3 = Color3.new(1, 1, 1)
-    image.BackgroundTransparency = 1
-    image.Size = UDim2.new(1, 0, 1, 0)
-    image.Image = "rbxassetid://2851929490"
-    image.ImageColor3 = color or Color3.fromRGB(40, 40, 60)
-    image.ImageTransparency = transparency or 0.3
-    image.ScaleType = Enum.ScaleType.Slice
-    image.SliceCenter = Rect.new(4, 4, 4, 4)
-    return image
-end
-
-createRoundedImage(TabButton, "RoundBg", ui_options.main_color, 0.2)
+local TabButtonBg = createRoundedImage(TabButton, "RoundBg", ui_options.main_color, 0.2)
 
 -- ============================================
--- 🏷️ LABEL TEMPLATE
+-- 🏷️ LABEL
 -- ============================================
 local Label = Instance.new("TextLabel")
 Label.Name = "Label"
@@ -584,7 +323,7 @@ Button.Text = "Button"
 Button.TextColor3 = Color3.fromRGB(255, 255, 255)
 Button.TextSize = 13
 
-createRoundedImage(Button, "RoundBg", ui_options.main_color, 0.15)
+local ButtonBg = createRoundedImage(Button, "RoundBg", ui_options.main_color, 0.15)
 
 -- ============================================
 -- 🔄 SWITCH
@@ -602,7 +341,7 @@ Switch.Text = ""
 Switch.TextColor3 = ui_options.accent_color
 Switch.TextSize = 18
 
-createRoundedImage(Switch, "RoundBg", Color3.fromRGB(60, 60, 90), 0.4)
+local SwitchBg = createRoundedImage(Switch, "RoundBg", Color3.fromRGB(60, 60, 90), 0.4)
 
 local SwitchTitle = Instance.new("TextLabel")
 SwitchTitle.Name = "Title"
@@ -712,7 +451,7 @@ TextBox.TextColor3 = ui_options.text_color
 TextBox.TextSize = 13
 TextBox.TextXAlignment = Enum.TextXAlignment.Left
 
-createRoundedImage(TextBox, "RoundBg", Color3.fromRGB(40, 40, 60), 0.3)
+local TextBoxBg = createRoundedImage(TextBox, "RoundBg", Color3.fromRGB(40, 40, 60), 0.3)
 
 -- ============================================
 -- 📋 DROPDOWN
@@ -731,7 +470,7 @@ Dropdown.TextColor3 = ui_options.text_color
 Dropdown.TextSize = 13
 Dropdown.TextXAlignment = Enum.TextXAlignment.Left
 
-createRoundedImage(Dropdown, "RoundBg", Color3.fromRGB(40, 40, 60), 0.3)
+local DropdownBg = createRoundedImage(Dropdown, "RoundBg", Color3.fromRGB(40, 40, 60), 0.3)
 
 local DropdownArrow = Instance.new("ImageLabel")
 DropdownArrow.Name = "Arrow"
@@ -786,6 +525,184 @@ DropdownItem.Text = "Item"
 DropdownItem.TextColor3 = Color3.fromRGB(200, 200, 220)
 DropdownItem.TextSize = 12
 DropdownItem.TextXAlignment = Enum.TextXAlignment.Left
+
+-- ============================================
+-- ⌨️ KEYBIND
+-- ============================================
+local Keybind = Instance.new("ImageLabel")
+Keybind.Name = "Keybind"
+Keybind.Parent = Prefabs
+Keybind.BackgroundColor3 = Color3.new(1, 1, 1)
+Keybind.BackgroundTransparency = 1
+Keybind.Size = UDim2.new(0, 200, 0, 24)
+Keybind.Image = "rbxassetid://2851929490"
+Keybind.ImageColor3 = Color3.fromRGB(40, 40, 60)
+Keybind.ImageTransparency = 0.3
+Keybind.ScaleType = Enum.ScaleType.Slice
+Keybind.SliceCenter = Rect.new(4, 4, 4, 4)
+
+local KeybindTitle = Instance.new("TextLabel")
+KeybindTitle.Name = "Title"
+KeybindTitle.Parent = Keybind
+KeybindTitle.BackgroundColor3 = Color3.new(1, 1, 1)
+KeybindTitle.BackgroundTransparency = 1
+KeybindTitle.Size = UDim2.new(0, 0, 1, 0)
+KeybindTitle.Font = Enum.Font.GothamSemibold
+KeybindTitle.Text = "  Keybind"
+KeybindTitle.TextColor3 = ui_options.text_color
+KeybindTitle.TextSize = 13
+KeybindTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+local KeybindInput = Instance.new("TextButton")
+KeybindInput.Name = "Input"
+KeybindInput.Parent = Keybind
+KeybindInput.BackgroundColor3 = Color3.new(1, 1, 1)
+KeybindInput.BackgroundTransparency = 1
+KeybindInput.BorderSizePixel = 0
+KeybindInput.Position = UDim2.new(1, -85, 0, 2)
+KeybindInput.Size = UDim2.new(0, 80, 1, -4)
+KeybindInput.ZIndex = 2
+KeybindInput.Font = Enum.Font.GothamSemibold
+KeybindInput.Text = "RShift"
+KeybindInput.TextColor3 = Color3.fromRGB(200, 200, 220)
+KeybindInput.TextSize = 12
+
+local KeybindInputBg = createRoundedImage(KeybindInput, "RoundBg", Color3.fromRGB(60, 60, 90), 0.3)
+
+-- ============================================
+-- 🎨 COLOR PICKER
+-- ============================================
+local ColorPicker = Instance.new("ImageLabel")
+ColorPicker.Name = "ColorPicker"
+ColorPicker.Parent = Prefabs
+ColorPicker.BackgroundColor3 = Color3.new(1, 1, 1)
+ColorPicker.BackgroundTransparency = 1
+ColorPicker.Size = UDim2.new(0, 200, 0, 120)
+ColorPicker.Image = "rbxassetid://2851929490"
+ColorPicker.ImageColor3 = Color3.fromRGB(40, 40, 60)
+ColorPicker.ImageTransparency = 0.3
+ColorPicker.ScaleType = Enum.ScaleType.Slice
+ColorPicker.SliceCenter = Rect.new(4, 4, 4, 4)
+
+local Palette = Instance.new("ImageLabel")
+Palette.Name = "Palette"
+Palette.Parent = ColorPicker
+Palette.BackgroundColor3 = Color3.new(1, 1, 1)
+Palette.BackgroundTransparency = 1
+Palette.Position = UDim2.new(0.05, 0, 0.05, 0)
+Palette.Size = UDim2.new(0, 100, 0, 100)
+Palette.Image = "rbxassetid://698052001"
+Palette.ScaleType = Enum.ScaleType.Slice
+Palette.SliceCenter = Rect.new(4, 4, 4, 4)
+
+local PaletteIndicator = Instance.new("ImageLabel")
+PaletteIndicator.Name = "Indicator"
+PaletteIndicator.Parent = Palette
+PaletteIndicator.BackgroundColor3 = Color3.new(1, 1, 1)
+PaletteIndicator.BackgroundTransparency = 1
+PaletteIndicator.Size = UDim2.new(0, 8, 0, 8)
+PaletteIndicator.ZIndex = 2
+PaletteIndicator.Image = "rbxassetid://2851926732"
+PaletteIndicator.ImageColor3 = Color3.new(1, 1, 1)
+PaletteIndicator.ScaleType = Enum.ScaleType.Slice
+PaletteIndicator.SliceCenter = Rect.new(12, 12, 12, 12)
+
+local Saturation = Instance.new("ImageLabel")
+Saturation.Name = "Saturation"
+Saturation.Parent = ColorPicker
+Saturation.BackgroundColor3 = Color3.new(1, 1, 1)
+Saturation.Position = UDim2.new(0.7, 0, 0.05, 0)
+Saturation.Size = UDim2.new(0, 12, 0, 100)
+Saturation.Image = "rbxassetid://3641079629"
+
+local SaturationIndicator = Instance.new("Frame")
+SaturationIndicator.Name = "Indicator"
+SaturationIndicator.Parent = Saturation
+SaturationIndicator.BackgroundColor3 = Color3.new(1, 1, 1)
+SaturationIndicator.BorderSizePixel = 0
+SaturationIndicator.Size = UDim2.new(0, 16, 0, 2)
+SaturationIndicator.ZIndex = 2
+
+local ColorSample = Instance.new("ImageLabel")
+ColorSample.Name = "Sample"
+ColorSample.Parent = ColorPicker
+ColorSample.BackgroundColor3 = Color3.new(1, 1, 1)
+ColorSample.BackgroundTransparency = 1
+ColorSample.Position = UDim2.new(0.85, 0, 0.05, 0)
+ColorSample.Size = UDim2.new(0, 24, 0, 24)
+ColorSample.Image = "rbxassetid://2851929490"
+ColorSample.ScaleType = Enum.ScaleType.Slice
+ColorSample.SliceCenter = Rect.new(4, 4, 4, 4)
+
+-- ============================================
+-- 📁 FOLDER
+-- ============================================
+local Folder = Instance.new("ImageLabel")
+Folder.Name = "Folder"
+Folder.Parent = Prefabs
+Folder.BackgroundColor3 = Color3.new(1, 1, 1)
+Folder.BackgroundTransparency = 1
+Folder.Size = UDim2.new(1, 0, 0, 24)
+Folder.Image = "rbxassetid://2851929490"
+Folder.ImageColor3 = Color3.fromRGB(30, 30, 50)
+Folder.ImageTransparency = 0.2
+Folder.ScaleType = Enum.ScaleType.Slice
+Folder.SliceCenter = Rect.new(4, 4, 4, 4)
+
+local FolderButton = Instance.new("TextButton")
+FolderButton.Name = "Button"
+FolderButton.Parent = Folder
+FolderButton.BackgroundColor3 = ui_options.main_color
+FolderButton.BackgroundTransparency = 0.1
+FolderButton.BorderSizePixel = 0
+FolderButton.Size = UDim2.new(1, 0, 0, 24)
+FolderButton.ZIndex = 2
+FolderButton.Font = Enum.Font.GothamSemibold
+FolderButton.Text = "  ▶ Folder"
+FolderButton.TextColor3 = ui_options.text_color
+FolderButton.TextSize = 13
+FolderButton.TextXAlignment = Enum.TextXAlignment.Left
+
+local FolderToggle = Instance.new("ImageLabel")
+FolderToggle.Name = "Toggle"
+FolderToggle.Parent = FolderButton
+FolderToggle.BackgroundColor3 = Color3.new(1, 1, 1)
+FolderToggle.BackgroundTransparency = 1
+FolderToggle.Position = UDim2.new(0, 5, 0.5, -8)
+FolderToggle.Size = UDim2.new(0, 16, 0, 16)
+FolderToggle.Image = "rbxassetid://4744658743"
+FolderToggle.ImageColor3 = Color3.fromRGB(200, 200, 220)
+FolderToggle.ImageTransparency = 0.5
+
+local FolderObjects = Instance.new("Frame")
+FolderObjects.Name = "Objects"
+FolderObjects.Parent = Folder
+FolderObjects.BackgroundColor3 = Color3.new(1, 1, 1)
+FolderObjects.BackgroundTransparency = 1
+FolderObjects.Position = UDim2.new(0, 12, 0, 28)
+FolderObjects.Size = UDim2.new(1, -12, 1, -28)
+FolderObjects.Visible = false
+
+local FolderList = Instance.new("UIListLayout")
+FolderList.Parent = FolderObjects
+FolderList.SortOrder = Enum.SortOrder.LayoutOrder
+FolderList.Padding = UDim.new(0, 4)
+
+-- ============================================
+-- ➡️ HORIZONTAL ALIGNMENT
+-- ============================================
+local HorizontalAlign = Instance.new("Frame")
+HorizontalAlign.Name = "HorizontalAlignment"
+HorizontalAlign.Parent = Prefabs
+HorizontalAlign.BackgroundColor3 = Color3.new(1, 1, 1)
+HorizontalAlign.BackgroundTransparency = 1
+HorizontalAlign.Size = UDim2.new(1, 0, 0, 24)
+
+local HAlignList = Instance.new("UIListLayout")
+HAlignList.Parent = HorizontalAlign
+HAlignList.FillDirection = Enum.FillDirection.Horizontal
+HAlignList.SortOrder = Enum.SortOrder.LayoutOrder
+HAlignList.Padding = UDim.new(0, 6)
 
 -- ============================================
 -- 🖥️ CONSOLE
@@ -871,6 +788,19 @@ createSyntaxLayer("RemoteHighlight", Color3.fromRGB(0, 150, 255))
 createSyntaxLayer("Info", Color3.fromRGB(0, 160, 255))
 
 -- ============================================
+-- 🌊 RIPPLE EFFECT
+-- ============================================
+local RippleCircle = Instance.new("ImageLabel")
+RippleCircle.Name = "Circle"
+RippleCircle.Parent = Prefabs
+RippleCircle.BackgroundColor3 = Color3.new(1, 1, 1)
+RippleCircle.BackgroundTransparency = 1
+RippleCircle.Image = "rbxassetid://266543268"
+RippleCircle.ImageColor3 = Color3.fromRGB(255, 255, 255)
+RippleCircle.ImageTransparency = 0.5
+RippleCircle.Visible = false
+
+-- ============================================
 -- 🪟 WINDOWS CONTAINER
 -- ============================================
 local Windows = Instance.new("Frame")
@@ -880,14 +810,6 @@ Windows.BackgroundColor3 = Color3.new(1, 1, 1)
 Windows.BackgroundTransparency = 1
 Windows.Position = UDim2.new(0, 20, 0, 20)
 Windows.Size = UDim2.new(1, -40, 1, -40)
-
--- ============================================
--- 📦 LIBRARY
--- ============================================
-local library = {}
-local windows_count = 0
-local dropdown_open = false
-local checks = { binding = false }
 
 -- ============================================
 -- 🎬 HELPERS
@@ -923,26 +845,26 @@ local function rgbtohsv(r, g, b)
     return h, s, v
 end
 
--- ============================================
--- 🎬 RIPPLE EFFECT
--- ============================================
-local RippleCircle = Instance.new("ImageLabel")
-RippleCircle.Name = "Circle"
-RippleCircle.Parent = Prefabs
-RippleCircle.BackgroundColor3 = Color3.new(1, 1, 1)
-RippleCircle.BackgroundTransparency = 1
-RippleCircle.Image = "rbxassetid://266543268"
-RippleCircle.ImageColor3 = Color3.fromRGB(255, 255, 255)
-RippleCircle.ImageTransparency = 0.5
-RippleCircle.Visible = false
+local function hasprop(object, prop)
+    local a, b = pcall(function()
+        return object[tostring(prop)]
+    end)
+    if a then return b end
+end
 
+-- ============================================
+-- 🎬 RIPPLE
+-- ============================================
 local function ripple(button, x, y)
     spawn(function()
         button.ClipsDescendants = true
         local circle = RippleCircle:Clone()
         circle.Parent = button
+        circle.Visible = true
         circle.ZIndex = 1000
-        circle.Position = UDim2.new(0, x - circle.AbsolutePosition.X, 0, y - circle.AbsolutePosition.Y)
+        local new_x = x - circle.AbsolutePosition.X
+        local new_y = y - circle.AbsolutePosition.Y
+        circle.Position = UDim2.new(0, new_x, 0, new_y)
         local size = math.max(button.AbsoluteSize.X, button.AbsoluteSize.Y) * 1.5
         circle:TweenSizeAndPosition(
             UDim2.new(0, size, 0, size),
@@ -956,27 +878,37 @@ local function ripple(button, x, y)
 end
 
 -- ============================================
--- 🏗️ ADD WINDOW
+-- 🏗️ LIBRARY
+-- ============================================
+local library = {}
+local windows_count = 0
+local dropdown_open = false
+local binding_mode = false
+
+-- ============================================
+-- 🪟 ADD WINDOW (FIXED)
 -- ============================================
 function library:AddWindow(title, options)
     windows_count = windows_count + 1
     title = tostring(title or "New Window")
     options = (typeof(options) == "table") and options or ui_options
     options.tween_time = options.animation_duration or 0.1
-
+    
+    -- Clone the window template
     local Window = Prefabs:FindFirstChild("Window"):Clone()
     Window.Parent = Windows
     Window:FindFirstChild("Title").Text = title
     Window.Size = UDim2.new(0, options.min_size.X, 0, options.min_size.Y)
     Window.ZIndex = Window.ZIndex + (windows_count * 10)
-
-    -- Apply glow border
+    Window.Visible = true
+    
+    -- Apply glow border color
     local glowBorder = Window:FindFirstChild("GlowBorder")
     if glowBorder then
         glowBorder.ImageColor3 = options.main_color
     end
-
-    -- Window color updater
+    
+    -- Color updater
     spawn(function()
         while Window and Window.Parent do
             local bar = Window:FindFirstChild("Bar")
@@ -995,93 +927,45 @@ function library:AddWindow(title, options)
             task.wait()
         end
     end)
-
+    
     local Resizer = Window:WaitForChild("Resizer")
     local window_data = {}
     Window.Draggable = true
-
-
+    
     -- ============================================
--- 📐 RESIZER (FIXED - Single Input Handler)
--- ============================================
-do
-    local resizingData = {}
-    
-    -- Single global input handler for ALL resizers
-    local function setupResizer(resizer, window, options)
-        local data = {
-            isResizing = false,
-            window = window,
-            resizer = resizer,
-            options = options,
-        }
-        table.insert(resizingData, data)
+    -- 📐 RESIZER (SIMPLIFIED FIX)
+    -- ============================================
+    do
+        local isResizing = false
         
-        resizer.MouseEnter:Connect(function()
-            if options.can_resize then
-                window.Draggable = false
-            end
-        end)
-        
-        resizer.MouseLeave:Connect(function()
-            if options.can_resize then
-                window.Draggable = true
-            end
-        end)
-    end
-    
-    -- Setup this window's resizer
-    setupResizer(Resizer, Window, options)
-    
-    -- SINGLE global input handler
-    UIS.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            -- Find which resizer is being used
-            for _, data in pairs(resizingData) do
-                local mousePos = gMouse()
-                local resizer = data.resizer
-                local window = data.window
-                local opts = data.options
-                
-                -- Check if mouse is over this resizer
-                if resizer and resizer.Active and opts.can_resize then
-                    local absPos = resizer.AbsolutePosition
-                    local absSize = resizer.AbsoluteSize
-                    
-                    if mousePos.X >= absPos.X and mousePos.X <= absPos.X + absSize.X and
-                       mousePos.Y >= absPos.Y and mousePos.Y <= absPos.Y + absSize.Y then
-                        
-                        data.isResizing = true
-                        window.Draggable = false
-                        
-                        spawn(function()
-                            while data.isResizing and resizer.Active do
-                                local newMouse = gMouse()
-                                local x = math.max(newMouse.X - window.AbsolutePosition.X, opts.min_size.X)
-                                local y = math.max(newMouse.Y - window.AbsolutePosition.Y, opts.min_size.Y)
-                                window.Size = UDim2.new(0, x, 0, y)
-                                task.wait()
-                            end
-                            window.Draggable = true
-                        end)
-                        
-                        break
-                    end
+        Resizer.MouseButton1Down:Connect(function()
+            if not options.can_resize then return end
+            isResizing = true
+            Window.Draggable = false
+            
+            spawn(function()
+                while isResizing do
+                    local mouse_pos = gMouse()
+                    local x = math.max(mouse_pos.X - Window.AbsolutePosition.X, options.min_size.X)
+                    local y = math.max(mouse_pos.Y - Window.AbsolutePosition.Y, options.min_size.Y)
+                    Window.Size = UDim2.new(0, x, 0, y)
+                    task.wait()
                 end
-            end
-        end
-    end)
-    
-    UIS.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            for _, data in pairs(resizingData) do
-                data.isResizing = false
-            end
-        end
-    end)
+                Window.Draggable = true
+            end)
+        end)
+        
+        Resizer.MouseButton1Up:Connect(function()
+            isResizing = false
+        end)
+        
+        Resizer.MouseLeave:Connect(function()
+            isResizing = false
+        end)
     end
+    
     -- ============================================
-    -- 🪟 MINIMIZE
+    -- 🔽 MINIMIZE
     -- ============================================
     do
         local open_close = Window:FindFirstChild("Bar"):FindFirstChild("Toggle")
@@ -1089,7 +973,7 @@ do
         local canopen = true
         local oldwindowdata = {}
         local oldy = Window.AbsoluteSize.Y
-
+        
         open_close.MouseButton1Click:Connect(function()
             if canopen then
                 canopen = false
@@ -1119,7 +1003,7 @@ do
             end
         end)
     end
-
+    
     -- ============================================
     -- 📑 TABS
     -- ============================================
@@ -1127,12 +1011,12 @@ do
         local tabs = Window:FindFirstChild("Tabs")
         local tab_selection = Window:FindFirstChild("TabSelection")
         local tab_buttons = tab_selection:FindFirstChild("TabButtons")
-
+        
         function window_data:AddTab(tab_name)
             local tab_data = {}
             tab_name = tostring(tab_name or "New Tab")
             tab_selection.Visible = true
-
+            
             local new_button = Prefabs:FindFirstChild("TabButton"):Clone()
             new_button.Parent = tab_buttons
             new_button.Text = tab_name
@@ -1141,11 +1025,12 @@ do
             
             local bg = new_button:FindFirstChild("RoundBg")
             if bg then bg.ZIndex = bg.ZIndex + (windows_count * 10) end
-
+            
             local new_tab = Prefabs:FindFirstChild("Tab"):Clone()
             new_tab.Parent = tabs
             new_tab.ZIndex = new_tab.ZIndex + (windows_count * 10)
-
+            new_tab.Visible = false
+            
             local function show()
                 if dropdown_open then return end
                 for i, v in next, tab_buttons:GetChildren() do
@@ -1161,38 +1046,19 @@ do
                 Resize(new_button, {Size = UDim2.new(0, new_button.AbsoluteSize.X, 0, 25)}, options.tween_time)
                 local newbg = new_button:FindFirstChild("RoundBg")
                 if newbg then newbg.ImageColor3 = Color3.fromRGB(73, 75, 79) end
-                
-                -- Animate tab content
-                local children = {}
-                for _, child in pairs(new_tab:GetChildren()) do
-                    if not child:IsA("UIListLayout") then
-                        table.insert(children, child)
-                    end
-                end
-                Stagger(new_tab, children, {
-                    staggerDelay = 0.03,
-                    duration = 0.2,
-                    scale = 0.95,
-                    variants = {"fade", "slide_up", "fade", "slide_right"}
-                })
-                
                 new_tab.Visible = true
             end
-
+            
             new_button.MouseButton1Click:Connect(show)
-
+            
             function tab_data:Show()
                 show()
             end
-
+            
             -- ============================================
             -- 🎨 UI ELEMENTS
             -- ============================================
             do
-                function tab_data:AddLabelImage(text, icon, config)
-                    return CreateLabelImage(new_tab, text, icon, config)
-                end
-
                 function tab_data:AddLabel(label_text)
                     label_text = tostring(label_text or "New Label")
                     local label = Prefabs:FindFirstChild("Label"):Clone()
@@ -1202,11 +1068,47 @@ do
                     label.ZIndex = label.ZIndex + (windows_count * 10)
                     return label
                 end
-
+                
+                function tab_data:AddLabelImage(text, icon, config)
+                    config = config or {}
+                    local frame = Instance.new("Frame")
+                    frame.Name = "LabelImage"
+                    frame.Parent = new_tab
+                    frame.BackgroundColor3 = Color3.new(1, 1, 1)
+                    frame.BackgroundTransparency = 1
+                    frame.Size = UDim2.new(1, 0, 0, config.height or 24)
+                    frame.ClipsDescendants = true
+                    
+                    local iconLabel = Instance.new("ImageLabel")
+                    iconLabel.Name = "Icon"
+                    iconLabel.Parent = frame
+                    iconLabel.Size = UDim2.new(0, 20, 0, 20)
+                    iconLabel.Position = UDim2.new(0, 0, 0.5, -10)
+                    iconLabel.BackgroundColor3 = Color3.new(1, 1, 1)
+                    iconLabel.BackgroundTransparency = 1
+                    iconLabel.Image = icon or ""
+                    iconLabel.ImageColor3 = config.iconColor or ui_options.accent_color
+                    
+                    local textLabel = Instance.new("TextLabel")
+                    textLabel.Name = "Text"
+                    textLabel.Parent = frame
+                    textLabel.Size = UDim2.new(1, -30, 1, 0)
+                    textLabel.Position = UDim2.new(0, 25, 0, 0)
+                    textLabel.BackgroundColor3 = Color3.new(1, 1, 1)
+                    textLabel.BackgroundTransparency = 1
+                    textLabel.Font = Enum.Font.GothamSemibold
+                    textLabel.Text = text or "Label"
+                    textLabel.TextColor3 = config.textColor or ui_options.text_color
+                    textLabel.TextSize = config.textSize or 14
+                    textLabel.TextXAlignment = Enum.TextXAlignment.Left
+                    
+                    return frame
+                end
+                
                 function tab_data:AddButton(button_text, callback)
                     button_text = tostring(button_text or "New Button")
                     callback = typeof(callback) == "function" and callback or function()end
-
+                    
                     local button = Prefabs:FindFirstChild("Button"):Clone()
                     button.Parent = new_tab
                     button.Text = button_text
@@ -1215,7 +1117,7 @@ do
                     
                     local bg = button:FindFirstChild("RoundBg")
                     if bg then bg.ZIndex = bg.ZIndex + (windows_count * 10) end
-
+                    
                     spawn(function()
                         while button and button.Parent do
                             local bbg = button:FindFirstChild("RoundBg")
@@ -1223,20 +1125,20 @@ do
                             task.wait()
                         end
                     end)
-
+                    
                     button.MouseButton1Click:Connect(function()
                         ripple(button, UIS:GetMouseLocation().X, UIS:GetMouseLocation().Y)
                         pcall(callback)
                     end)
-
+                    
                     return button
                 end
-
+                
                 function tab_data:AddSwitch(switch_text, callback)
                     local switch_data = {}
                     switch_text = tostring(switch_text or "New Switch")
                     callback = typeof(callback) == "function" and callback or function()end
-
+                    
                     local switch = Prefabs:FindFirstChild("Switch"):Clone()
                     switch.Parent = new_tab
                     switch:FindFirstChild("Title").Text = switch_text
@@ -1245,7 +1147,7 @@ do
                     
                     local bg = switch:FindFirstChild("RoundBg")
                     if bg then bg.ZIndex = bg.ZIndex + (windows_count * 10) end
-
+                    
                     spawn(function()
                         while switch and switch.Parent do
                             local sbg = switch:FindFirstChild("RoundBg")
@@ -1253,33 +1155,33 @@ do
                             task.wait()
                         end
                     end)
-
+                    
                     local toggled = false
                     switch.MouseButton1Click:Connect(function()
                         toggled = not toggled
                         switch.Text = toggled and utf8.char(10003) or ""
                         pcall(callback, toggled)
                     end)
-
+                    
                     function switch_data:Set(bool)
                         toggled = (typeof(bool) == "boolean") and bool or false
                         switch.Text = toggled and utf8.char(10003) or ""
                         pcall(callback, toggled)
                     end
-
+                    
                     return switch_data, switch
                 end
-
+                
                 function tab_data:AddToggle(switch_text, callback)
                     return tab_data:AddSwitch(switch_text, callback)
                 end
-
+                
                 function tab_data:AddTextBox(textbox_text, callback, textbox_options)
                     textbox_text = tostring(textbox_text or "New TextBox")
                     callback = typeof(callback) == "function" and callback or function()end
                     textbox_options = typeof(textbox_options) == "table" and textbox_options or {clear = true}
                     textbox_options = {clear = textbox_options.clear == true}
-
+                    
                     local textbox = Prefabs:FindFirstChild("TextBox"):Clone()
                     textbox.Parent = new_tab
                     textbox.PlaceholderText = textbox_text
@@ -1287,17 +1189,17 @@ do
                     
                     local bg = textbox:FindFirstChild("RoundBg")
                     if bg then bg.ZIndex = bg.ZIndex + (windows_count * 10) end
-
+                    
                     textbox.FocusLost:Connect(function(ep)
                         if ep and #textbox.Text > 0 then
                             pcall(callback, textbox.Text)
                             if textbox_options.clear then textbox.Text = "" end
                         end
                     end)
-
+                    
                     return textbox
                 end
-
+                
                 function tab_data:AddSlider(slider_text, callback, slider_options)
                     local slider_data = {}
                     slider_text = tostring(slider_text or "New Slider")
@@ -1308,11 +1210,11 @@ do
                         max = slider_options.max or 100,
                         readonly = slider_options.readonly or false,
                     }
-
+                    
                     local slider = Prefabs:FindFirstChild("Slider"):Clone()
                     slider.Parent = new_tab
                     slider.ZIndex = slider.ZIndex + (windows_count * 10)
-
+                    
                     local title = slider:FindFirstChild("Title")
                     local indicator = slider:FindFirstChild("Indicator")
                     local value = slider:FindFirstChild("Value")
@@ -1320,7 +1222,7 @@ do
                     indicator.ZIndex = indicator.ZIndex + (windows_count * 10)
                     value.ZIndex = value.ZIndex + (windows_count * 10)
                     title.Text = slider_text
-
+                    
                     do
                         local Entered = false
                         slider.MouseEnter:Connect(function()
@@ -1331,7 +1233,7 @@ do
                             Entered = false
                             Window.Draggable = true
                         end)
-
+                        
                         local Held = false
                         UIS.InputBegan:Connect(function(input)
                             if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -1360,7 +1262,7 @@ do
                                 Held = false
                             end
                         end)
-
+                        
                         function slider_data:Set(new_value)
                             new_value = tonumber(new_value) or 0
                             new_value = math.clamp(new_value / 100, 0, 1)
@@ -1371,20 +1273,20 @@ do
                             value.Text = tostring(sel_value)
                             pcall(callback, sel_value)
                         end
-
+                        
                         slider_data:Set(slider_options.min)
                     end
-
+                    
                     return slider_data, slider
                 end
-
+                
                 function tab_data:AddKeybind(keybind_name, callback, keybind_options)
                     local keybind_data = {}
                     keybind_name = tostring(keybind_name or "New Keybind")
                     callback = typeof(callback) == "function" and callback or function()end
                     keybind_options = typeof(keybind_options) == "table" and keybind_options or {}
                     keybind_options = {standard = keybind_options.standard or Enum.KeyCode.RightShift}
-
+                    
                     local keybind = Prefabs:FindFirstChild("Keybind"):Clone()
                     local input = keybind:FindFirstChild("Input")
                     local title = keybind:FindFirstChild("Title")
@@ -1394,11 +1296,11 @@ do
                     
                     local ibg = input:FindFirstChild("RoundBg")
                     if ibg then ibg.ZIndex = ibg.ZIndex + (windows_count * 10) end
-
+                    
                     keybind.Parent = new_tab
                     title.Text = "  " .. keybind_name
                     keybind.Size = UDim2.new(0, gNameLen(title) + 80, 0, 20)
-
+                    
                     local shortkeys = {
                         RightControl = 'RightCtrl',
                         LeftControl = 'LeftCtrl',
@@ -1407,20 +1309,20 @@ do
                         MouseButton1 = "Mouse1",
                         MouseButton2 = "Mouse2"
                     }
-
+                    
                     local keybind_key = keybind_options.standard
-
+                    
                     function keybind_data:SetKeybind(Keybind)
                         local key = shortkeys[Keybind.Name] or Keybind.Name
                         input.Text = key
                         keybind_key = Keybind
                     end
-
+                    
                     UIS.InputBegan:Connect(function(a, b)
-                        if checks.binding then
+                        if binding_mode then
                             spawn(function()
                                 wait()
-                                checks.binding = false
+                                binding_mode = false
                             end)
                             return
                         end
@@ -1428,25 +1330,26 @@ do
                             pcall(callback, keybind_key)
                         end
                     end)
-
+                    
                     keybind_data:SetKeybind(keybind_options.standard)
-
+                    
                     input.MouseButton1Click:Connect(function()
-                        if checks.binding then return end
+                        if binding_mode then return end
                         input.Text = "..."
-                        checks.binding = true
+                        binding_mode = true
                         local a, b = UIS.InputBegan:Wait()
+                        binding_mode = false
                         keybind_data:SetKeybind(a.KeyCode)
                     end)
-
+                    
                     return keybind_data, keybind
                 end
-
+                
                 function tab_data:AddDropdown(dropdown_name, callback)
                     local dropdown_data = {}
                     dropdown_name = tostring(dropdown_name or "New Dropdown")
                     callback = typeof(callback) == "function" and callback or function()end
-
+                    
                     local dropdown = Prefabs:FindFirstChild("Dropdown"):Clone()
                     local box = dropdown:FindFirstChild("Box")
                     local objects = box:FindFirstChild("Objects")
@@ -1455,11 +1358,11 @@ do
                     box.ZIndex = box.ZIndex + (windows_count * 10)
                     objects.ZIndex = objects.ZIndex + (windows_count * 10)
                     indicator.ZIndex = indicator.ZIndex + (windows_count * 10)
-
+                    
                     dropdown.Parent = new_tab
                     dropdown.Text = "      " .. dropdown_name
                     box.Size = UDim2.new(1, 0, 0, 0)
-
+                    
                     local open = false
                     dropdown.MouseButton1Click:Connect(function()
                         open = not open
@@ -1468,7 +1371,7 @@ do
                             len = 10 * 20
                             objects.CanvasSize = UDim2.new(0, 0, (#objects:GetChildren() - 1) * 0.1, 0)
                         end
-
+                        
                         if open then
                             if dropdown_open then return end
                             dropdown_open = true
@@ -1480,23 +1383,23 @@ do
                             Resize(indicator, {Rotation = -90}, options.tween_time)
                         end
                     end)
-
+                    
                     function dropdown_data:Add(n)
                         local object_data = {}
                         n = tostring(n or "New Object")
-
+                        
                         local object = Prefabs:FindFirstChild("DropdownItem"):Clone()
                         object.Parent = objects
                         object.Text = n
                         object.ZIndex = object.ZIndex + (windows_count * 10)
-
+                        
                         object.MouseEnter:Connect(function()
                             object.BackgroundColor3 = options.main_color
                         end)
                         object.MouseLeave:Connect(function()
                             object.BackgroundColor3 = Color3.fromRGB(33, 34, 36)
                         end)
-
+                        
                         if open then
                             local len = (#objects:GetChildren() - 1) * 20
                             if #objects:GetChildren() - 1 >= 10 then
@@ -1505,7 +1408,7 @@ do
                             end
                             Resize(box, {Size = UDim2.new(1, 0, 0, len)}, options.tween_time)
                         end
-
+                        
                         object.MouseButton1Click:Connect(function()
                             if dropdown_open then
                                 dropdown.Text = "      [ " .. n .. " ]"
@@ -1516,32 +1419,32 @@ do
                                 pcall(callback, n)
                             end
                         end)
-
+                        
                         function object_data:Remove()
                             object:Destroy()
                         end
-
+                        
                         return object, object_data
                     end
-
+                    
                     return dropdown_data, dropdown
                 end
-
+                
                 function tab_data:AddColorPicker(callback)
                     local color_picker_data = {}
                     callback = typeof(callback) == "function" and callback or function()end
-
+                    
                     local color_picker = Prefabs:FindFirstChild("ColorPicker"):Clone()
                     color_picker.Parent = new_tab
                     color_picker.ZIndex = color_picker.ZIndex + (windows_count * 10)
-
+                    
                     local palette = color_picker:FindFirstChild("Palette")
                     local sample = color_picker:FindFirstChild("Sample")
                     local saturation = color_picker:FindFirstChild("Saturation")
                     palette.ZIndex = palette.ZIndex + (windows_count * 10)
                     sample.ZIndex = sample.ZIndex + (windows_count * 10)
                     saturation.ZIndex = saturation.ZIndex + (windows_count * 10)
-
+                    
                     do
                         local h, s, v = 0, 1, 1
                         local function update()
@@ -1550,9 +1453,9 @@ do
                             saturation.ImageColor3 = Color3.fromHSV(h, 1, 1)
                             pcall(callback, color)
                         end
-
+                        
                         update()
-
+                        
                         local Entered1, Entered2 = false, false
                         palette.MouseEnter:Connect(function()
                             Window.Draggable = false
@@ -1570,12 +1473,12 @@ do
                             Window.Draggable = true
                             Entered2 = false
                         end)
-
+                        
                         local palette_indicator = palette:FindFirstChild("Indicator")
                         local saturation_indicator = saturation:FindFirstChild("Indicator")
                         palette_indicator.ZIndex = palette_indicator.ZIndex + (windows_count * 10)
                         saturation_indicator.ZIndex = saturation_indicator.ZIndex + (windows_count * 10)
-
+                        
                         local Held = false
                         UIS.InputBegan:Connect(function(input)
                             if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -1607,7 +1510,7 @@ do
                                 Held = false
                             end
                         end)
-
+                        
                         function color_picker_data:Set(color)
                             color = typeof(color) == "Color3" and color or Color3.new(1, 1, 1)
                             local h2, s2, v2 = rgbtohsv(color.r * 255, color.g * 255, color.b * 255)
@@ -1616,10 +1519,10 @@ do
                             pcall(callback, color)
                         end
                     end
-
+                    
                     return color_picker_data, color_picker
                 end
-
+                
                 function tab_data:AddConsole(console_options, _type)
                     local console_data = {}
                     console_options = typeof(console_options) == "table" and console_options or {readonly = true, full = false}
@@ -1629,30 +1532,30 @@ do
                         readonly = console_options.readonly == true,
                         full = console_options.full == true,
                     }
-
+                    
                     local console = Prefabs:FindFirstChild("Console"):Clone()
                     console.Parent = new_tab
                     console.ZIndex = console.ZIndex + (windows_count * 10)
                     console.Size = UDim2.new(1, 0, console_options.full and 1 or 0, console_options.y)
-
+                    
                     local sf = console:GetChildren()[1]
                     local Source = sf:FindFirstChild("Source")
                     local Lines = sf:FindFirstChild("Lines")
                     Source.ZIndex = Source.ZIndex + (windows_count * 10)
                     Lines.ZIndex = Lines.ZIndex + (windows_count * 10)
                     Source.TextEditable = not console_options.readonly
-
-                    -- Syntax highlighting
+                    
+                    -- Syntax highlighting simplified
                     do
                         for i,v in next, Source:GetChildren() do
                             v.ZIndex = v.ZIndex + (windows_count * 10) + 1
                         end
                         local commentsLayer = Source:FindFirstChild("Comments")
                         if commentsLayer then commentsLayer.ZIndex = commentsLayer.ZIndex + 1 end
-
+                        
                         local lua_keywords = {"and", "break", "do", "else", "elseif", "end", "false", "for", "function", "goto", "if", "in", "local", "nil", "not", "or", "repeat", "return", "then", "true", "until", "while"}
                         local global_env = {"getrawmetatable", "newcclosure", "islclosure", "setclipboard", "game", "workspace", "script", "math", "string", "table", "print", "wait", "BrickColor", "Color3", "next", "pairs", "ipairs", "select", "unpack", "Instance", "Vector2", "Vector3", "CFrame", "Ray", "UDim2", "Enum", "assert", "error", "warn", "tick", "loadstring", "_G", "shared", "getfenv", "setfenv", "newproxy", "setmetatable", "getmetatable", "os", "debug", "pcall", "ypcall", "xpcall", "rawequal", "rawset", "rawget", "tonumber", "tostring", "type", "typeof", "_VERSION", "coroutine", "delay", "require", "spawn", "LoadLibrary", "settings", "stats", "time", "UserSettings", "version", "Axes", "ColorSequence", "Faces", "ColorSequenceKeypoint", "NumberRange", "NumberSequence", "NumberSequenceKeypoint", "gcinfo", "elapsedTime", "collectgarbage", "PhysicalProperties", "Rect", "Region3", "Region3int16", "UDim", "Vector2int16", "Vector3int16", "load", "fire", "Fire","task","Parent","Name","Size","Position","Transparency","LocalPlayer","Character","HumanoidRootPart","Humanoid","Health","WalkSpeed","JumpPower","Gravity","HipHeight","MaxHealth","FogEnd","FogColor","Value","table.concat","string.find","table.find","table.clear","table.remove"}
-
+                        
                         local CustomMethods = {}
                         local CustomSyntax = {}
                         if(_type=="Custom")then
@@ -1661,7 +1564,7 @@ do
                             CustomSyntax = {"-","+","*",",","=","%","#","$","[","]","!","&","@","->","^"}
                             CustomMethods = {"true","false","null","deleted"}
                         end
-
+                        
                         for i,v in pairs(getgenv())do
                             if(not global_env[i])then
                                 table.insert(global_env,i)
@@ -1677,7 +1580,7 @@ do
                                 table.insert(global_env,v.Name)
                             end
                         end
-
+                        
                         local Highlight = function(string, keywords)
                             local K = {}
                             local S = string
@@ -1692,7 +1595,7 @@ do
                             end)
                             return S
                         end
-
+                        
                         local function hTokens(string)
                             local Token = {["="]=true, ["."]=true, [","]=true, ["("]=true, [")"]=true, ["["]=true, ["]"]=true, ["{"]=true, ["}"]=true, [":"]=true, ["*"]=true, ["/"]=true, ["+"]=true, ["-"]=true, ["%"]=true, [";"]=true, ["~"]=true}
                             local A = ""
@@ -1704,7 +1607,7 @@ do
                             end)
                             return A
                         end
-
+                        
                         local function strings(string)
                             local highlight, quote = "", false
                             string:gsub(".", function(c)
@@ -1718,7 +1621,7 @@ do
                             end)
                             return highlight
                         end
-
+                        
                         local function info(string)
                             local highlight, quote = "", false
                             string:gsub(".", function(c)
@@ -1732,7 +1635,7 @@ do
                             end)
                             return highlight
                         end
-
+                        
                         local function comments(string)
                             local ret = ""
                             string:gsub("[^\r\n]+", function(c)
@@ -1746,7 +1649,7 @@ do
                             end)
                             return ret
                         end
-
+                        
                         local function numbers(string)
                             local A = ""
                             string:gsub(".", function(c)
@@ -1757,13 +1660,13 @@ do
                             end)
                             return A
                         end
-
+                        
                         local function highlight_lua(type)
                             if type == "Text" then
                                 Source.Text = Source.Text:gsub("\13", "")
                                 Source.Text = Source.Text:gsub("\t", "      ")
                                 local s = Source.Text
-
+                                
                                 local keywordsLayer = Source:FindFirstChild("Keywords")
                                 local globalsLayer = Source:FindFirstChild("Globals")
                                 local remoteLayer = Source:FindFirstChild("RemoteHighlight")
@@ -1771,7 +1674,7 @@ do
                                 local numbersLayer = Source:FindFirstChild("Numbers")
                                 local stringsLayer = Source:FindFirstChild("Strings")
                                 local commentsLayer = Source:FindFirstChild("Comments")
-
+                                
                                 if keywordsLayer then keywordsLayer.Text = Highlight(s, lua_keywords) end
                                 if globalsLayer then globalsLayer.Text = Highlight(s, global_env) end
                                 if(_type~="Custom")then
@@ -1783,7 +1686,7 @@ do
                                 if numbersLayer then numbersLayer.Text = numbers(s) end
                                 if stringsLayer then stringsLayer.Text = strings(s) end
                                 if commentsLayer then commentsLayer.Text = comments(s) end
-
+                                
                                 local lin = 1
                                 s:gsub("\n", function() lin = lin + 1 end)
                                 Lines.Text = ""
@@ -1791,7 +1694,7 @@ do
                                 sf.CanvasSize = UDim2.new(0, 0, lin * 0.153846154, 0)
                             end
                         end
-
+                        
                         local function highlight_logs(type)
                             if type == "Text" then
                                 Source.Text = Source.Text:gsub("\13", "")
@@ -1804,7 +1707,7 @@ do
                                 sf.CanvasSize = UDim2.new(0, 0, lin * 0.153846154, 0)
                             end
                         end
-
+                        
                         if console_options.source == "Lua" then
                             highlight_lua("Text")
                             Source.Changed:Connect(highlight_lua)
@@ -1814,27 +1717,27 @@ do
                             Source.Changed:Connect(highlight_logs)
                         end
                     end
-
+                    
                     function console_data:Set(code)
                         Source.Text = tostring(code)
                     end
-
+                    
                     function console_data:Get()
                         return Source.Text
                     end
-
+                    
                     function console_data:Log(msg)
                         Source.Text = Source.Text .. "[*] " .. tostring(msg) .. "\n"
                     end
-
+                    
                     return console_data, console
                 end
-
+                
                 function tab_data:AddHorizontalAlignment()
                     local ha_data = {}
                     local ha = Prefabs:FindFirstChild("HorizontalAlignment"):Clone()
                     ha.Parent = new_tab
-
+                    
                     function ha_data:AddButton(...)
                         local data, object
                         local ret = {tab_data:AddButton(...)}
@@ -1849,14 +1752,14 @@ do
                             return object
                         end
                     end
-
+                    
                     return ha_data, ha
                 end
-
+                
                 function tab_data:AddFolder(folder_name)
                     local folder_data = {}
                     folder_name = tostring(folder_name or "New Folder")
-
+                    
                     local folder = Prefabs:FindFirstChild("Folder"):Clone()
                     local button = folder:FindFirstChild("Button")
                     local objects = folder:FindFirstChild("Objects")
@@ -1868,10 +1771,10 @@ do
                     
                     local bg = button:FindFirstChild("RoundBg")
                     if bg then bg.ZIndex = bg.ZIndex + (windows_count * 10) end
-
+                    
                     folder.Parent = new_tab
                     button.Text = "      " .. folder_name
-
+                    
                     spawn(function()
                         while folder and folder.Parent do
                             local bbg = button:FindFirstChild("RoundBg")
@@ -1879,7 +1782,7 @@ do
                             task.wait()
                         end
                     end)
-
+                    
                     local function gFolderLen()
                         local n = 25
                         for i,v in next, objects:GetChildren() do
@@ -1889,38 +1792,26 @@ do
                         end
                         return n
                     end
-
+                    
                     local open = false
                     button.MouseButton1Click:Connect(function()
                         open = not open
                         if open then
                             Resize(toggle, {Rotation = 90}, options.tween_time)
                             objects.Visible = true
-                            -- Animate children
-                            local children = {}
-                            for _, child in pairs(objects:GetChildren()) do
-                                if not child:IsA("UIListLayout") then
-                                    table.insert(children, child)
-                                end
-                            end
-                            Stagger(objects, children, {
-                                staggerDelay = 0.03,
-                                duration = 0.2,
-                                variants = {"slide_left", "slide_right", "fade"}
-                            })
                         else
                             Resize(toggle, {Rotation = 0}, options.tween_time)
                             objects.Visible = false
                         end
                     end)
-
+                    
                     spawn(function()
                         while folder and folder.Parent do
                             Resize(folder, {Size = UDim2.new(1, 0, 0, (open and gFolderLen() or 20))}, options.tween_time)
                             task.wait()
                         end
                     end)
-
+                    
                     for i,v in next, tab_data do
                         folder_data[i] = function(...)
                             local data, object
@@ -1937,22 +1828,22 @@ do
                             end
                         end
                     end
-
+                    
                     return folder_data, folder
                 end
             end
-
+            
             return tab_data, new_tab
         end
     end
-
+    
     -- Fix ZIndex
     for i, v in next, Window:GetDescendants() do
         if hasprop(v, "ZIndex") then
             v.ZIndex = v.ZIndex + (windows_count * 10)
         end
     end
-
+    
     return window_data, Window
 end
 
@@ -1979,33 +1870,14 @@ function library:FormatWindows()
 end
 
 -- ============================================
--- 🎮 INPUT SYSTEM (FIXED)
+-- 🎮 KEYBIND TOGGLE
 -- ============================================
-
--- Make sure UIS is defined
-local UIS = game:GetService("UserInputService")
-
--- Toggle key from options
 local toggleKey = ui_options.toggle_key or Enum.KeyCode.RightShift
 
--- Track if we're binding a key (global scope)
-_G._elerium_binding = false
-
--- Main input handler
 UIS.InputBegan:Connect(function(input, gameProcessed)
-    -- Ignore if the input was processed by the game
-    if gameProcessed then
-        return
-    end
-    
-    -- Check for keybind toggle
+    if gameProcessed then return end
     if input.KeyCode == toggleKey then
-        -- Don't toggle if we're binding a key
-        if _G._elerium_binding then
-            return
-        end
-        
-        -- Toggle the UI
+        if binding_mode then return end
         if imgui then
             imgui.Enabled = not imgui.Enabled
             print("🔄 UI Toggled:", imgui.Enabled and "ON" or "OFF")
@@ -2013,8 +1885,8 @@ UIS.InputBegan:Connect(function(input, gameProcessed)
     end
 end)
 
-print("🚀 Elerium Ultra loaded with NEXT-GEN features!")
-print("✨ Spring physics | Layout animations | Gestures")
+print("🚀 Elerium Ultra loaded successfully!")
+print("✨ Premium UI with all features")
 print("🔑 Press " .. tostring(toggleKey):gsub("Enum.KeyCode.", "") .. " to toggle UI")
 
 return library
