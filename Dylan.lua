@@ -1946,12 +1946,24 @@ function library:FormatWindows()
 end
 
 -- ============================================
--- 🎮 KEYBIND TOGGLE
+-- 🎮 KEYBIND TOGGLE (FIXED)
 -- ============================================
+-- This goes at the bottom of the library, right before `return library`
+
+local toggleKey = ui_options.toggle_key or Enum.KeyCode.RightShift
+
 UIS.InputBegan:Connect(function(input, gameProcessed)
-    if input.KeyCode == ((typeof(ui_options.toggle_key) == "EnumItem") and ui_options.toggle_key or Enum.KeyCode.RightShift) then
-        if imgui and not checks.binding then
+    -- Check if the key matches
+    if input.KeyCode == toggleKey then
+        -- Don't toggle if we're in the middle of binding a key
+        if checks.binding then
+            return
+        end
+        
+        -- Toggle the UI
+        if imgui then
             imgui.Enabled = not imgui.Enabled
+            print("🔄 UI Toggled:", imgui.Enabled and "ON" or "OFF")
         end
     end
 end)
