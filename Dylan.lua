@@ -1946,17 +1946,29 @@ function library:FormatWindows()
 end
 
 -- ============================================
--- 🎮 KEYBIND TOGGLE (FIXED)
+-- 🎮 INPUT SYSTEM (FIXED)
 -- ============================================
--- This goes at the bottom of the library, right before `return library`
 
+-- Make sure UIS is defined
+local UIS = game:GetService("UserInputService")
+
+-- Toggle key from options
 local toggleKey = ui_options.toggle_key or Enum.KeyCode.RightShift
 
+-- Track if we're binding a key (global scope)
+_G._elerium_binding = false
+
+-- Main input handler
 UIS.InputBegan:Connect(function(input, gameProcessed)
-    -- Check if the key matches
+    -- Ignore if the input was processed by the game
+    if gameProcessed then
+        return
+    end
+    
+    -- Check for keybind toggle
     if input.KeyCode == toggleKey then
-        -- Don't toggle if we're in the middle of binding a key
-        if checks.binding then
+        -- Don't toggle if we're binding a key
+        if _G._elerium_binding then
             return
         end
         
@@ -1970,6 +1982,6 @@ end)
 
 print("🚀 Elerium Ultra loaded with NEXT-GEN features!")
 print("✨ Spring physics | Layout animations | Gestures")
-print("🔑 Press RightShift to toggle UI")
+print("🔑 Press " .. tostring(toggleKey):gsub("Enum.KeyCode.", "") .. " to toggle UI")
 
 return library
