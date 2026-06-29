@@ -870,18 +870,27 @@ local function ApplyGradient(element, colors, rotation)
         end
         return
     end
+    
+    -- Duplicate first color at end for seamless loop
+    local loopColors = {}
+    for i, v in ipairs(colors) do table.insert(loopColors, v) end
+    if #loopColors >= 3 then table.insert(loopColors, loopColors[1]) end
+    
     local gradient = Instance.new("UIGradient")
     gradient.Parent = element
     gradient.Rotation = rotation or 0
     local keypoints = {}
-    if #colors == 2 then
-        table.insert(keypoints, ColorSequenceKeypoint.new(0, colors[1]))
-        table.insert(keypoints, ColorSequenceKeypoint.new(1, colors[2]))
-    elseif #colors >= 3 then
-        table.insert(keypoints, ColorSequenceKeypoint.new(0, colors[1]))
-        table.insert(keypoints, ColorSequenceKeypoint.new(0.5, colors[2]))
-        table.insert(keypoints, ColorSequenceKeypoint.new(1, colors[3]))
+    
+    if #loopColors == 2 then
+        table.insert(keypoints, ColorSequenceKeypoint.new(0, loopColors[1]))
+        table.insert(keypoints, ColorSequenceKeypoint.new(1, loopColors[2]))
+    elseif #loopColors >= 3 then
+        local step = 1 / (#loopColors - 1)
+        for i, color in ipairs(loopColors) do
+            table.insert(keypoints, ColorSequenceKeypoint.new((i - 1) * step, color))
+        end
     end
+    
     gradient.Color = ColorSequence.new(keypoints)
     if element:IsA("ImageLabel") or element:IsA("ImageButton") then
         element.ImageColor3 = Color3.new(1, 1, 1)
@@ -892,17 +901,16 @@ local function ApplyGradient(element, colors, rotation)
 end
 
 -- ============================================
--- ANIMATE GRADIENT - SLIDING WAVE (off-screen to on-screen loop)
+-- ANIMATE GRADIENT - INFINITE FLOW (seamless water effect)
 -- ============================================
 local function AnimateGradient(element, speed)
     speed = speed or 0.8
     local gradient = element:FindFirstChild("UIGradient")
     if not gradient then return end
-    local offset = -1.0  -- Start OFF-SCREEN (left side)
+    local offset = 0
     spawn(function()
         while gradient and gradient.Parent do
-            offset = offset + speed * 0.025
-            if offset > 1.5 then offset = -1.0 end  -- Reset to off-screen left
+            offset = (offset + speed * 0.025) % 1
             gradient.Offset = Vector2.new(offset, 0)
             task.wait()
         end
