@@ -899,6 +899,172 @@ local function ApplyGradient(element, colors, rotation)
     end
     return gradient
 end
+
+-- ============================================
+-- 🆕 VISUAL ENHANCEMENT HELPERS
+-- ============================================
+
+-- 1. Flowing border (barber‑pole)
+local function ApplyFlowingBorder(element, thickness, colors, speed)
+    speed = speed or 0.5
+    thickness = thickness or 3
+    if not colors or #colors < 2 then
+        colors = {Color3.fromRGB(255,0,0), Color3.fromRGB(255,255,255)} -- fallback red/white
+    end
+
+    -- Clone the element's parent and position to preserve layout
+    local border = Instance.new("Frame")
+    border.Name = "FlowingBorder"
+    border.BackgroundColor3 = Color3.new(1,1,1)
+    border.BackgroundTransparency = 0
+    border.BorderSizePixel = 0
+    border.Size = element.Size
+    border.Position = element.Position
+    border.ZIndex = element.ZIndex - 1
+    border.Parent = element.Parent
+
+    -- Gradient with repeating stripes
+    local gradient = Instance.new("UIGradient")
+    gradient.Rotation = 45
+    local keypoints = {}
+    local steps = 8
+    for i = 1, steps do
+        local t = (i - 1) / steps
+        local color = colors[(i % 2 == 1) and 1 or 2]
+        table.insert(keypoints, ColorSequenceKeypoint.new(t, color))
+    end
+    table.insert(keypoints, ColorSequenceKeypoint.new(1, colors[1]))
+    gradient.Color = ColorSequence.new(keypoints)
+    gradient.Parent = border
+
+    -- Inner mask
+    local mask = Instance.new("Frame")
+    mask.Name = "Mask"
+    mask.BackgroundTransparency = 1
+    mask.BorderSizePixel = 0
+    mask.Size = UDim2.new(1, -thickness*2, 1, -thickness*2)
+    mask.Position = UDim2.new(0, thickness, 0, thickness)
+    mask.ZIndex = element.ZIndex + 1
+    mask.Parent = border
+
+    -- Move original element inside mask
+    element.Parent = mask
+    element.Position = UDim2.new(0,0,0,0)
+    element.Size = UDim2.new(1,0,1,0)
+
+    -- Animate offset
+    local offset = 0
+    local connection = RunService.Heartbeat:Connect(function(dt)
+        offset = (offset + dt / speed) % 1
+        gradient.Offset = offset
+    end)
+
+    return border, connection
+end
+
+-- 2. Drop shadow
+local function ApplyDropShadow(element, size, transparency)
+    size = size or 5
+    transparency = transparency or 0.6
+    local shadow = Instance.new("ImageLabel")
+    shadow.Name = "DropShadow"
+    shadow.Size = UDim2.new(1, size*2, 1, size*2)
+    shadow.Position = UDim2.new(0, -size, 0, -size)
+    shadow.BackgroundTransparency = 1
+    shadow.Image = "rbxassetid://2851926732"
+    shadow.ImageColor3 = Color3.new(0,0,0)
+    shadow.ImageTransparency = transparency
+    shadow.ZIndex = element.ZIndex - 2
+    shadow.ScaleType = Enum.ScaleType.Slice
+    shadow.SliceCenter = Rect.new(12,12,12,12)
+    shadow.Parent = element.Parent
+    -- Keep shadow behind element
+    return shadow
+end
+
+-- 3. Shimmer title bar
+local function ShimmerGradient(gradient, speed)
+    speed = speed or 0.2
+    local offset = 0
+    local connection = RunService.Heartbeat:Connect(function(dt)
+        if not gradient or not gradient.Parent then connection:Disconnect() return end
+        offset = (offset + dt * speed) % 1
+        gradient.Offset = offset
+    end)
+    return connection
+end
+
+-- 4. Hover effects for buttons and tabs
+local function AddHoverEffects(button, scaleAmount, glowColor)
+    scaleAmount = scaleAmount or 1.05
+    glowColor = glowColor or Color3.fromRGB(255,255,255)
+    local originalSize = button.Size
+    local glowStroke = nil
+
+    local function createGlow()
+        if not glowStroke then
+            glowStroke = Instance.new("UIStroke")
+            glowStroke.Color = glowColor
+            glowStroke.Thickness = 2
+            glowStroke.Transparency = 0.7
+            glowStroke.Parent = button
+        end
+    end
+    local function removeGlow()
+        if glowStroke then glowStroke:Destroy(); glowStroke = nil end
+    end
+
+    button.MouseEnter:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Size = UDim2.new(0, originalSize.X.Offset * scaleAmount, 0, originalSize.Y.Offset * scaleAmount)
+        }):Play()
+        createGlow()
+        TweenService:Create(glowStroke, TweenInfo.new(0.15), {Transparency = 0.2}):Play()
+    end)
+    button.MouseLeave:Connect(function()
+        TweenService:Create(button, TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            Size = originalSize
+        }):Play()
+        if glowStroke then
+            TweenService:Create(glowStroke, TweenInfo.new(0.15), {Transparency = 1}):Play()
+            task.wait(0.15)
+            removeGlow()
+        end
+    end)
+end
+
+-- 5. Custom scrollbar styling (thin, rounded, colored)
+local function StyleScrollbar(scrollFrame, color)
+    color = color or Color3.fromRGB(255,0,0)
+    scrollFrame.ScrollBarThickness = 4
+    scrollFrame.ScrollBarImageColor3 = color
+    scrollFrame.ScrollBarImageTransparency = 0.5
+    -- Add rounded corners if possible (ScrollBarImage has no corner, but we can overlay)
+    -- We'll just set the color, enough for a clean look.
+end
+
+-- 6. Status dot on avatar
+local function AddStatusDot(avatarFrame, color)
+    color = color or Color3.fromRGB(0,255,0)
+    local dot = Instance.new("ImageLabel")
+    dot.Name = "StatusDot"
+    dot.Size = UDim2.new(0, 12, 0, 12)
+    dot.Position = UDim2.new(1, -4, 1, -4)
+    dot.AnchorPoint = Vector2.new(1, 1)
+    dot.BackgroundColor3 = color
+    dot.BackgroundTransparency = 0
+    dot.Image = "rbxassetid://2851929490"
+    dot.ImageColor3 = color
+    dot.ZIndex = 9999
+    dot.Parent = avatarFrame
+
+    local pulse = TweenService:Create(dot, TweenInfo.new(1, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+        ImageTransparency = 0.5
+    })
+    pulse:Play()
+    return dot
+end
+
 -- ============================================
 -- RGB TO HSV
 -- ============================================
@@ -1006,6 +1172,14 @@ function library:AddWindow(titleText, options)
     options.background_transparency = options.background_transparency or 0.1
     if not options.main_color then options.main_color = options.title_bar[1] end
 
+    -- 🆕 default visual enhancements (can be overridden)
+    options.flowing_border = options.flowing_border or false  -- default off, enable by passing table
+    options.shimmer_title = options.shimmer_title ~= false    -- default on
+    options.drop_shadow = options.drop_shadow ~= false        -- default on
+    options.hover_effects = options.hover_effects ~= false    -- default on
+    options.custom_scrollbar = options.custom_scrollbar ~= false -- default off (to not break existing)
+    options.status_dot = options.status_dot ~= false          -- default on
+
     local window = prefabs:FindFirstChild("Window"):Clone()
     window.Parent = windows
     window:FindFirstChild("Title").Text = titleText
@@ -1049,6 +1223,11 @@ function library:AddWindow(titleText, options)
         bar.BackgroundTransparency = options.title_bar_transparency
         local barGrad = ApplyGradient(bar, options.title_bar, 0)
 
+        -- 🆕 Shimmer title bar
+        if options.shimmer_title and barGrad then
+            ShimmerGradient(barGrad, 0.2)
+        end
+
         if tabSelection then
             tabSelection.Size = UDim2.new(1, -30, 0, 22)
             tabSelection.Position = UDim2.new(0, 15, 0, 28)
@@ -1082,6 +1261,21 @@ function library:AddWindow(titleText, options)
                 tabsContainer.Visible = true
             end
         end)
+    end
+
+    -- 🆕 Drop shadow
+    if options.drop_shadow then
+        ApplyDropShadow(window, 8, 0.5)
+    end
+
+    -- 🆕 Flowing border
+    local borderConnection = nil
+    if options.flowing_border then
+        local borderOpts = options.flowing_border
+        local colors = borderOpts.colors or {Color3.fromRGB(255,0,0), Color3.fromRGB(255,255,255)}
+        local thickness = borderOpts.thickness or 4
+        local speed = borderOpts.speed or 0.5
+        _, borderConnection = ApplyFlowingBorder(window, thickness, colors, speed)
     end
 
     local resizer = window:WaitForChild("Resizer")
@@ -1221,6 +1415,11 @@ function library:AddWindow(titleText, options)
                 outlineCorner.Parent = outline
                 outline.Parent = newButton
 
+                -- 🆕 Hover effects for tabs (if enabled)
+                if options.hover_effects then
+                    AddHoverEffects(newButton, 1.08, options.main_color)
+                end
+
                 local newTab = prefabs:FindFirstChild("Tab"):Clone()
                 newTab.Parent = tabsContainer
                 newTab.ZIndex = newTab.ZIndex + windowCount * 10
@@ -1358,6 +1557,12 @@ function library:AddWindow(titleText, options)
                         buttonBg.ImageTransparency = options.title_bar_transparency or 0
                         ApplyGradient(buttonBg, options.title_bar, 0)
                         button.TextColor3 = Color3.new(1, 1, 1)
+
+                        -- 🆕 Hover effects for buttons
+                        if options.hover_effects then
+                            AddHoverEffects(button, 1.05, options.main_color)
+                        end
+
                         button.MouseButton1Click:Connect(function()
                             Ripple(button, mouse.X, mouse.Y)
                             pcall(callback)
@@ -1589,6 +1794,11 @@ function library:AddWindow(titleText, options)
                         boxCorner.CornerRadius = UDim.new(0, 6)
                         boxCorner.Parent = box
 
+                        -- 🆕 Custom scrollbar for dropdown
+                        if options.custom_scrollbar then
+                            StyleScrollbar(objects, options.main_color)
+                        end
+
                         objects.BackgroundTransparency = 1
                         objects.Position = UDim2.new(0, 0, 0, 0)
                         objects.Size = UDim2.new(1, 0, 1, 0)
@@ -1779,6 +1989,11 @@ function library:AddWindow(titleText, options)
                         source.ZIndex = source.ZIndex + windowCount * 10
                         lines.ZIndex = lines.ZIndex + windowCount * 10
                         source.TextEditable = not consoleOptions.readonly
+
+                        -- 🆕 Custom scrollbar for console
+                        if options.custom_scrollbar then
+                            StyleScrollbar(scroll, options.main_color)
+                        end
 
                         do
                             for _, child in next, source:GetChildren() do
@@ -2031,7 +2246,7 @@ function library:AddWindow(titleText, options)
     end
 
     -- ============================================
-    -- PROFILE PICTURE - UIStroke + TOP LAYER
+    -- PROFILE PICTURE + STATUS DOT
     -- ============================================
     local userId = game:GetService("Players").LocalPlayer.UserId
     local avatarUrl = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. userId .. "&width=150&height=150&format=png"
@@ -2045,7 +2260,6 @@ function library:AddWindow(titleText, options)
     avatarFrame.BackgroundTransparency = 0.3
     avatarFrame.ZIndex = 999
 
-    -- UIStroke instead of Border
     local avatarStroke = Instance.new("UIStroke")
     avatarStroke.Parent = avatarFrame
     avatarStroke.Color = options.main_color
@@ -2059,6 +2273,18 @@ function library:AddWindow(titleText, options)
 
     avatarFrame.Image = avatarUrl
     avatarFrame.ImageTransparency = 0.1
+
+    -- 🆕 Status dot
+    if options.status_dot then
+        AddStatusDot(avatarFrame, Color3.fromRGB(0,255,0)) -- green
+    end
+
+    -- Add Remove method to windowData
+    function windowData:Remove()
+        if borderConnection then borderConnection:Disconnect() end
+        if particleConnection then particleConnection:Disconnect() end
+        window:Destroy()
+    end
 
     return windowData, window
 end
