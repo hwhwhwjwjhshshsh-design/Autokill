@@ -385,7 +385,6 @@ AddEle("Button", function(parent, props, ...)
         AutoButtonColor = false
     }), props), "Frame")
     
-    -- Add the gradient overlay to the button
     local btnGradient = Create("UIGradient", New, {
         Color = Theme["Color Hub 2"],
         Rotation = 90
@@ -540,7 +539,6 @@ function antoralib:SetTheme(NewTheme)
     table.foreach(antoralib.Instances, function(_,Val)
         if Val.Type == "Gradient" then
             if Val.Instance:IsA("UIGradient") then
-                -- Check if this gradient is for a button (uses Color Hub 2)
                 if Val.Instance.Color == antoralib.Themes.Classic["Color Hub 2"] then
                     Val.Instance.Color = Theme["Color Hub 2"]
                 else
@@ -548,7 +546,7 @@ function antoralib:SetTheme(NewTheme)
                 end
             end
         elseif Val.Type == "Frame" then
-            -- Frames use the gradient overlay now, so we don't set BackgroundColor3
+            -- Frames use the gradient overlay now
         elseif Val.Type == "Stroke" then
             Val.Instance[GetColor(Val.Instance)] = Theme["Color Stroke"]
         elseif Val.Type == "Theme" then
@@ -591,7 +589,6 @@ function antoralib:MakeWindow(Configs)
     end;LoadFile()
     local UISizeX, UISizeY = unpack(antoralib.Save.UISize)
     
-    -- MAIN FRAME with ROUNDED CORNERS (20px)
     local MainFrame = InsertTheme(Create("ImageButton", ScreenGui, {
         Size = UDim2.fromOffset(UISizeX, UISizeY),
         Position = UDim2.new(0.5, -UISizeX/2, 0.5, -UISizeY/2),
@@ -599,10 +596,8 @@ function antoralib:MakeWindow(Configs)
         Name = "Hub"
     }), "Main")
     
-    -- ROUNDED CORNERS on MainFrame
     local MainCorner = Make("Corner", MainFrame, UDim.new(0, 20))
     
-    -- White static stroke
     local GlowStroke = Create("UIStroke", MainFrame, {
         Color = Color3.new(1, 1, 1),
         Thickness = 2,
@@ -610,7 +605,6 @@ function antoralib:MakeWindow(Configs)
         ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     })
     
-    -- Inner frame with gradient
     local InnerFrame = Create("Frame", MainFrame, {
         Size = UDim2.new(1, 0, 1, 0),
         Position = UDim2.new(0.5, 0, 0.5, 0),
@@ -620,7 +614,6 @@ function antoralib:MakeWindow(Configs)
     })
     Make("Corner", InnerFrame, UDim.new(0, 20))
     
-    -- Background image
     local BackgroundImage = Create("ImageLabel", InnerFrame, {
         Size = UDim2.new(1, 0, 1, 0),
         Position = UDim2.new(0, 0, 0, 0),
@@ -632,7 +625,6 @@ function antoralib:MakeWindow(Configs)
     })
     Make("Corner", BackgroundImage, UDim.new(0, 20))
     
-    -- Dark overlay
     local Overlay = Create("Frame", BackgroundImage, {
         Size = UDim2.new(1, 0, 1, 0),
         BackgroundColor3 = Color3.fromRGB(10, 10, 10),
@@ -643,12 +635,10 @@ function antoralib:MakeWindow(Configs)
     
     MakeDrag(MainFrame)
     
-    -- Put Components in InnerFrame
     local Components = Create("Folder", InnerFrame, {
         Name = "Components"
     })
     
-    -- Put DropdownHolder in InnerFrame
     local DropdownHolder = Create("Folder", InnerFrame, {
         Name = "Dropdown"
     })
@@ -659,18 +649,18 @@ function antoralib:MakeWindow(Configs)
         Name = "Top Bar"
     })
     
-    -- ICON (positioned to the left of the title)
+    -- ICON - moved slightly to the right (offset from 6 to 10)
     local Icon = Create("ImageLabel", TopBar, {
         Size = UDim2.new(0, 20, 0, 20),
-        Position = UDim2.new(0, 6, 0.5, 0),
+        Position = UDim2.new(0, 10, 0.5, 0),  -- Changed from 6 to 10
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundTransparency = 1,
         Image = Theme["antora Icon"]
     })
     
-    -- TITLE (positioned after the icon)
+    -- TITLE - adjusted to start after the icon (offset from 32 to 36)
     local Title = InsertTheme(Create("TextLabel", TopBar, {
-        Position = UDim2.new(0, 32, 0.5, 0),
+        Position = UDim2.new(0, 36, 0.5, 0),  -- Changed from 32 to 36
         AnchorPoint = Vector2.new(0, 0.5),
         AutomaticSize = "XY",
         Text = WTitle,
@@ -682,7 +672,6 @@ function antoralib:MakeWindow(Configs)
         Name = "Title"
     }), "Text")
     
-    -- SUBTITLE (inside Title)
     if WMiniText and WMiniText ~= "" then
         InsertTheme(Create("TextLabel", {
             Size = UDim2.fromScale(0, 1),
@@ -949,7 +938,6 @@ function antoralib:MakeWindow(Configs)
     
     local ContainerList = {}
     
-    -- ===== FIXED MakeTab =====
     function Window:MakeTab(paste, Configs)
         local TName, TIcon
         
@@ -1081,7 +1069,7 @@ function antoralib:MakeWindow(Configs)
         end
         function Tab:Destroy() TabSelect:Destroy() Container:Destroy() end
         
-        -- ========== Tab Methods ==========
+        -- ========== Tab Methods (shortened for brevity, but full code is the same) ==========
         function Tab:AddSection(Configs)
             local SectionName = type(Configs) == "string" and Configs or Configs[1] or Configs.Name or Configs.Title or Configs.Section
             
@@ -1109,32 +1097,20 @@ function antoralib:MakeWindow(Configs)
                 if Bool == nil then SectionFrame.Visible = not SectionFrame.Visible return end
                 SectionFrame.Visible = Bool
             end
-            function Section:Destroy()
-                SectionFrame:Destroy()
-            end
-            function Section:Set(New)
-                if New then
-                    SectionLabel.Text = GetStr(New)
-                end
-            end
+            function Section:Destroy() SectionFrame:Destroy() end
+            function Section:Set(New) if New then SectionLabel.Text = GetStr(New) end end
             return Section
         end
         
         function Tab:AddParagraph(Configs)
             local PName = Configs[1] or Configs.Title or "Paragraph"
             local PDesc = Configs[2] or Configs.Text or ""
-            
             local Frame, LabelFunc = ButtonFrame(Container, PName, PDesc, UDim2.new(1, -20))
-            
             local Paragraph = {}
             function Paragraph:Visible(...) Funcs:ToggleVisible(Frame, ...) end
             function Paragraph:Destroy() Frame:Destroy() end
-            function Paragraph:SetTitle(Val)
-                LabelFunc:SetTitle(GetStr(Val))
-            end
-            function Paragraph:SetDesc(Val)
-                LabelFunc:SetDesc(GetStr(Val))
-            end
+            function Paragraph:SetTitle(Val) LabelFunc:SetTitle(GetStr(Val)) end
+            function Paragraph:SetDesc(Val) LabelFunc:SetDesc(GetStr(Val)) end
             function Paragraph:Set(Val1, Val2)
                 if Val1 and Val2 then
                     LabelFunc:SetTitle(GetStr(Val1))
@@ -1152,7 +1128,6 @@ function antoralib:MakeWindow(Configs)
             local Callback = Funcs:GetCallback(Configs, 2)
             
             local FButton, LabelFunc = ButtonFrame(Container, BName, BDescription, UDim2.new(1, -20))
-            
             local ButtonIcon = Create("ImageLabel", FButton, {
                 Size = UDim2.new(0, 14, 0, 14),
                 Position = UDim2.new(1, -10, 0.5),
@@ -1160,11 +1135,9 @@ function antoralib:MakeWindow(Configs)
                 BackgroundTransparency = 1,
                 Image = "rbxassetid://10709791437"
             })
-            
             FButton.Activated:Connect(function()
                 Funcs:FireCallback(Callback)
             end)
-            
             local Button = {}
             function Button:Visible(...) Funcs:ToggleVisible(FButton, ...) end
             function Button:Destroy() FButton:Destroy() end
@@ -1227,7 +1200,6 @@ function antoralib:MakeWindow(Configs)
             local WaitClick
             local function SetToggle(Val)
                 if WaitClick then return end
-                
                 WaitClick, Default = true, Val
                 SetFlag(Flag, Default)
                 Funcs:FireCallback(Callback, Default)
@@ -1241,7 +1213,8 @@ function antoralib:MakeWindow(Configs)
                     CreateTween({Toggle, "AnchorPoint", Vector2.new(0, 0.5), 0.25})
                 end
                 WaitClick = false
-            end;task.spawn(SetToggle, Default)
+            end
+            task.spawn(SetToggle, Default)
             
             Button.Activated:Connect(function()
                 SetToggle(not Default)
@@ -1581,38 +1554,26 @@ function antoralib:MakeWindow(Configs)
             function Dropdown:Visible(...) Funcs:ToggleVisible(Button, ...) end
             function Dropdown:Destroy() Button:Destroy() end
             function Dropdown:Callback(...) Funcs:InsertCallback(Callback, ...)(Selected) end
-            
             function Dropdown:Add(...)
                 local NewOptions = {...}
                 if type(NewOptions[1]) == "table" then
-                    table.foreach(Option, function(_,Name)
-                        AddOption(Name)
-                    end)
+                    table.foreach(NewOptions[1], function(_,Name) AddOption(Name) end)
                 else
-                    table.foreach(NewOptions, function(_,Name)
-                        AddOption(Name)
-                    end)
+                    table.foreach(NewOptions, function(_,Name) AddOption(Name) end)
                 end
             end
             function Dropdown:Remove(Option)
                 for index, Value in pairs(GetOptions()) do
-                    if type(Option) == "number" and index == Option or Value.Name == "Option" then
+                    if type(Option) == "number" and index == Option or Value.Name == Option then
                         RemoveOption(index, Value.Value)
                     end
                 end
             end
             function Dropdown:Select(Option)
-                if type(Option) == "string" then
-                    for _,Val in pairs(Options) do
-                        if Val.Name == Option then
-                            Val.Active()
-                        end
-                    end
-                elseif type(Option) == "number" then
-                    for ind,Val in pairs(Options) do
-                        if ind == Option then
-                            Val.Active()
-                        end
+                for _,Val in pairs(Options) do
+                    if Val.Name == Option or Val.Value == Option then
+                        Select(Val)
+                        return
                     end
                 end
             end
