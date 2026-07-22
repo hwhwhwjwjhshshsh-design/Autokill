@@ -134,7 +134,7 @@ local Funcs = {} do
         Obj.Visible = Bool ~= nil and Bool or Obj.Visible
     end
     
-    function Funcs:ToggleParent(Obj, Parent)
+    function Funcs:ToggleParent(Obj, Parent, Bool)
         if Bool ~= nil then
             Obj.Parent = Bool
         else
@@ -339,6 +339,7 @@ local function VerifyTheme(Theme)
             return true
         end
     end
+    return false
 end
 
 local function SaveJson(FileName, save)
@@ -362,7 +363,7 @@ end
 AddEle("Corner", function(parent, CornerRadius)
     local New = SetProps(Create("UICorner", parent, {
         CornerRadius = CornerRadius or UDim.new(0, 17)
-    }), props)
+    }))
     return New
 end)
 
@@ -448,7 +449,7 @@ local function ButtonFrame(Instance, Title, Description, HolderSize)
     })
     Make("Corner", Frame, UDim.new(0, 6))
     
-    LabelHolder = Create("Frame", Frame, {
+    local LabelHolder = Create("Frame", Frame, {
         AutomaticSize = "Y",
         BackgroundTransparency = 1,
         Size = HolderSize,
@@ -516,7 +517,7 @@ function antoralib:GetIcon(index)
     local firstMatch = nil
     index = string.lower(index):gsub("lucide", ""):gsub("-", "")
     
-    for Name, Icon in self.Icons do
+    for Name, Icon in pairs(self.Icons) do
         Name = Name:gsub("lucide", ""):gsub("-", "")
         if Name == index then
             return Icon
@@ -583,7 +584,11 @@ function antoralib:MakeWindow(Configs)
             
             if s and type(_Flags) == "string" then
                 local s,r = pcall(function() return HttpService:JSONDecode(_Flags) end)
-                Flags = s and r or {}
+                if s and type(r) == "table" then
+                    for k,v in pairs(r) do
+                        Flags[k] = v
+                    end
+                end
             end
         end
     end;LoadFile()
@@ -614,7 +619,6 @@ function antoralib:MakeWindow(Configs)
     })
     Make("Corner", InnerFrame, UDim.new(0, 20))
     
-    -- UPDATED: New image 84595542654454
     local BackgroundImage = Create("ImageLabel", InnerFrame, {
         Size = UDim2.new(1, 0, 1, 0),
         Position = UDim2.new(0, 0, 0, 0),
@@ -650,7 +654,6 @@ function antoralib:MakeWindow(Configs)
         Name = "Top Bar"
     })
     
-    -- UPDATED: New icon image 84595542654454
     local Icon = Create("ImageLabel", TopBar, {
         Size = UDim2.new(0, 20, 0, 20),
         Position = UDim2.new(0, 10, 0.5, 0),
@@ -673,7 +676,7 @@ function antoralib:MakeWindow(Configs)
     }), "Text")
     
     if WMiniText and WMiniText ~= "" then
-        InsertTheme(Create("TextLabel", {
+        local SubTitle = InsertTheme(Create("TextLabel", {
             Size = UDim2.fromScale(0, 1),
             AutomaticSize = "X",
             AnchorPoint = Vector2.new(0, 1),
@@ -686,7 +689,8 @@ function antoralib:MakeWindow(Configs)
             TextSize = 10,
             Font = Enum.Font.Creepster,
             Name = "SubTitle"
-        }), "DarkText").Parent = Title
+        }), "DarkText")
+        SubTitle.Parent = Title
     end
     
     local MainScroll = InsertTheme(Create("ScrollingFrame", Components, {
@@ -726,9 +730,7 @@ function antoralib:MakeWindow(Configs)
         Name = "Buttons"
     })
     
-    -- ===== MARBLE UI MINIMIZE SYSTEM =====
-    
-    -- UPDATED: CloseButton with new image
+    -- Close Button - Updated with new asset ID 118561288885971
     local CloseButton = Create("ImageButton", MainFrame, {
         Name = "CloseButton",
         AnchorPoint = Vector2.new(0.5, 0.5),
@@ -736,13 +738,12 @@ function antoralib:MakeWindow(Configs)
         Size = UDim2.fromOffset(48, 48),
         BackgroundTransparency = 1,
         BorderSizePixel = 0,
-        Image = "https://www.roblox.com/asset-thumbnail/image?assetId=84595542654454&width=678&height=810&format=png",
+        Image = "rbxassetid://118561288885971",
         ScaleType = Enum.ScaleType.Fit,
         ZIndex = 10
     })
     Make("Corner", CloseButton, UDim.new(1, 0))
     
-    -- Hover animations
     CloseButton.MouseEnter:Connect(function()
         CloseButton:TweenSize(UDim2.fromOffset(54, 54), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15, true)
     end)
@@ -750,7 +751,6 @@ function antoralib:MakeWindow(Configs)
         CloseButton:TweenSize(UDim2.fromOffset(48, 48), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15, true)
     end)
     
-    -- UPDATED: MinimizedFrame with new image
     local MinimizedFrame = Create("ImageButton", ScreenGui, {
         Name = "MinimizedFrame",
         AnchorPoint = Vector2.new(1, 0),
@@ -858,7 +858,7 @@ function antoralib:MakeWindow(Configs)
         end
         if Configs.Stroke then
             Stroke = Make("Stroke", Button)
-            SetProps(Stroke, Configs.Corner)
+            SetProps(Stroke, Configs.Stroke)
         end
         
         SetProps(Button, Configs.Button)
@@ -1125,7 +1125,7 @@ function antoralib:MakeWindow(Configs)
         end
         function Tab:Visible(Bool)
             Funcs:ToggleVisible(TabSelect, Bool)
-            Funcs:ToggleParent(Container, Bool, Containers)
+            Funcs:ToggleParent(Container, Containers, Bool)
         end
         function Tab:Destroy() TabSelect:Destroy() Container:Destroy() end
         
