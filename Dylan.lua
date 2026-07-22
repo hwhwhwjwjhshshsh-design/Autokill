@@ -26,7 +26,7 @@ local antoralib = {
             ["Color Theme"] = Color3.fromRGB(255, 50, 50),
             ["Color Text"] = Color3.fromRGB(243, 243, 243),
             ["Color Dark Text"] = Color3.fromRGB(180, 180, 180),
-            ["antora Icon"] = "https://www.roblox.com/asset-thumbnail/image?assetId=114929713504311&width=678&height=810&format=png"
+            ["antora Icon"] = "https://www.roblox.com/asset-thumbnail/image?assetId=84595542654454&width=678&height=810&format=png"
         }
     },
     Info = {
@@ -614,11 +614,12 @@ function antoralib:MakeWindow(Configs)
     })
     Make("Corner", InnerFrame, UDim.new(0, 20))
     
+    -- UPDATED: New image 84595542654454
     local BackgroundImage = Create("ImageLabel", InnerFrame, {
         Size = UDim2.new(1, 0, 1, 0),
         Position = UDim2.new(0, 0, 0, 0),
         BackgroundTransparency = 1,
-        Image = "https://www.roblox.com/asset-thumbnail/image?assetId=114929713504311&width=678&height=810&format=png",
+        Image = "https://www.roblox.com/asset-thumbnail/image?assetId=84595542654454&width=678&height=810&format=png",
         ScaleType = Enum.ScaleType.Crop,
         ImageColor3 = Color3.fromRGB(255, 255, 255),
         ImageTransparency = 0.05
@@ -649,18 +650,17 @@ function antoralib:MakeWindow(Configs)
         Name = "Top Bar"
     })
     
-    -- ICON - moved slightly to the right (offset from 6 to 10)
+    -- UPDATED: New icon image 84595542654454
     local Icon = Create("ImageLabel", TopBar, {
         Size = UDim2.new(0, 20, 0, 20),
-        Position = UDim2.new(0, 10, 0.5, 0),  -- Changed from 6 to 10
+        Position = UDim2.new(0, 10, 0.5, 0),
         AnchorPoint = Vector2.new(0, 0.5),
         BackgroundTransparency = 1,
-        Image = Theme["antora Icon"]
+        Image = "https://www.roblox.com/asset-thumbnail/image?assetId=84595542654454&width=678&height=810&format=png"
     })
     
-    -- TITLE - adjusted to start after the icon (offset from 32 to 36)
     local Title = InsertTheme(Create("TextLabel", TopBar, {
-        Position = UDim2.new(0, 36, 0.5, 0),  -- Changed from 32 to 36
+        Position = UDim2.new(0, 36, 0.5, 0),
         AnchorPoint = Vector2.new(0, 0.5),
         AutomaticSize = "XY",
         Text = WTitle,
@@ -726,28 +726,91 @@ function antoralib:MakeWindow(Configs)
         Name = "Buttons"
     })
     
-    local CloseButton = Create("ImageButton", {
-        Size = UDim2.new(0, 14, 0, 14),
-        Position = UDim2.new(1, -10, 0.5),
-        AnchorPoint = Vector2.new(1, 0.5),
+    -- ===== MARBLE UI MINIMIZE SYSTEM =====
+    
+    -- UPDATED: CloseButton with new image
+    local CloseButton = Create("ImageButton", MainFrame, {
+        Name = "CloseButton",
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        Position = UDim2.new(1, 0, 0, 0),
+        Size = UDim2.fromOffset(48, 48),
         BackgroundTransparency = 1,
-        Image = "rbxassetid://10747384394",
-        AutoButtonColor = false,
-        Name = "Close"
+        BorderSizePixel = 0,
+        Image = "https://www.roblox.com/asset-thumbnail/image?assetId=84595542654454&width=678&height=810&format=png",
+        ScaleType = Enum.ScaleType.Fit,
+        ZIndex = 10
+    })
+    Make("Corner", CloseButton, UDim.new(1, 0))
+    
+    -- Hover animations
+    CloseButton.MouseEnter:Connect(function()
+        CloseButton:TweenSize(UDim2.fromOffset(54, 54), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15, true)
+    end)
+    CloseButton.MouseLeave:Connect(function()
+        CloseButton:TweenSize(UDim2.fromOffset(48, 48), Enum.EasingDirection.Out, Enum.EasingStyle.Quad, 0.15, true)
+    end)
+    
+    -- UPDATED: MinimizedFrame with new image
+    local MinimizedFrame = Create("ImageButton", ScreenGui, {
+        Name = "MinimizedFrame",
+        AnchorPoint = Vector2.new(1, 0),
+        Position = UDim2.new(1, -20, 0, 20),
+        Size = UDim2.fromOffset(60, 60),
+        BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        Visible = false,
+        ZIndex = 100,
+        Image = "https://www.roblox.com/asset-thumbnail/image?assetId=84595542654454&width=678&height=810&format=png",
+        ScaleType = Enum.ScaleType.Fit
+    })
+    Make("Corner", MinimizedFrame, UDim.new(1, 0))
+    
+    local MinimizedStroke = Create("UIStroke", MinimizedFrame, {
+        Color = Color3.fromRGB(255,255,255),
+        Thickness = 2,
+        Transparency = 0.3,
+        ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     })
     
-    local MinimizeButton = SetProps(CloseButton:Clone(), {
-        Position = UDim2.new(1, -35, 0.5),
-        Image = "rbxassetid://10734896206",
-        Name = "Minimize"
-    })
+    -- STATE
+    local isMinimized = false
+    local MainSize = UDim2.fromOffset(UISizeX, UISizeY)
+    local MainPos = UDim2.new(0.5, -UISizeX/2, 0.5, -UISizeY/2)
     
-    SetChildren(ButtonsFolder, {
-        CloseButton,
-        MinimizeButton
-    })
+    -- MINIMIZE FUNCTION
+    local function MinimizeUI()
+        if isMinimized then return end
+        isMinimized = true
+        
+        local targetPos = UDim2.new(1, -40, 0, 40)
+        local targetSize = UDim2.fromScale(0.05, 0.05)
+        local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+        
+        TweenService:Create(MainFrame, tweenInfo, {Size = targetSize, Position = targetPos}):Play()
+        
+        task.wait(0.3)
+        MainFrame.Visible = false
+        
+        MinimizedFrame.Visible = true
+        MinimizedFrame.Size = UDim2.fromOffset(0,0)
+        MinimizedFrame:TweenSize(UDim2.fromOffset(60,60), Enum.EasingDirection.Out, Enum.EasingStyle.Back, 0.3, true)
+    end
     
-    local Minimized, SaveSize, WaitClick
+    -- RESTORE FUNCTION
+    local function RestoreUI()
+        isMinimized = false
+        MinimizedFrame.Visible = false
+        MainFrame.Visible = true
+        
+        local tweenInfo = TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+        TweenService:Create(MainFrame, tweenInfo, {Size = MainSize, Position = MainPos}):Play()
+    end
+    
+    -- CONNECT BUTTONS
+    CloseButton.MouseButton1Click:Connect(MinimizeUI)
+    MinimizedFrame.MouseButton1Click:Connect(RestoreUI)
+    
+    -- REPLACE Window methods
     local Window, FirstTab = {}, false
     
     function Window:CloseBtn()
@@ -764,25 +827,21 @@ function antoralib:MakeWindow(Configs)
     end
     
     function Window:MinimizeBtn()
-        if WaitClick then return end
-        WaitClick = true
-        
-        if Minimized then
-            MinimizeButton.Image = "rbxassetid://10734896206"
-            CreateTween({MainFrame, "Size", SaveSize, 0.25, true})
-            Minimized = false
+        if isMinimized then
+            RestoreUI()
         else
-            MinimizeButton.Image = "rbxassetid://10734924532"
-            SaveSize = MainFrame.Size
-            CreateTween({MainFrame, "Size", UDim2.fromOffset(MainFrame.Size.X.Offset, 28), 0.25, true})
-            Minimized = true
+            MinimizeUI()
         end
-        
-        WaitClick = false
     end
+    
     function Window:Minimize()
-        MainFrame.Visible = not MainFrame.Visible
+        MinimizeUI()
     end
+    
+    function Window:Restore()
+        RestoreUI()
+    end
+    
     function Window:AddMinimizeButton(Configs)
         local Button = MakeDrag(Create("ImageButton", ScreenGui, {
             Size = UDim2.fromOffset(35, 35),
@@ -811,6 +870,7 @@ function antoralib:MakeWindow(Configs)
             Button = Button
         }
     end
+    
     function Window:Set(Val1, Val2)
         if type(Val1) == "string" and type(Val2) == "string" then
             Title.Text = Val1
@@ -821,8 +881,8 @@ function antoralib:MakeWindow(Configs)
     
     function Window:Dialog(Configs)
         if MainFrame:FindFirstChild("Dialog") then return end
-        if Minimized then
-            Window:MinimizeBtn()
+        if isMinimized then
+            RestoreUI()
         end
         
         local DTitle = Configs[1] or Configs.Title or "Dialog"
@@ -1069,7 +1129,7 @@ function antoralib:MakeWindow(Configs)
         end
         function Tab:Destroy() TabSelect:Destroy() Container:Destroy() end
         
-        -- ========== Tab Methods (shortened for brevity, but full code is the same) ==========
+        -- ========== Tab Methods ==========
         function Tab:AddSection(Configs)
             local SectionName = type(Configs) == "string" and Configs or Configs[1] or Configs.Name or Configs.Title or Configs.Section
             
@@ -1097,20 +1157,32 @@ function antoralib:MakeWindow(Configs)
                 if Bool == nil then SectionFrame.Visible = not SectionFrame.Visible return end
                 SectionFrame.Visible = Bool
             end
-            function Section:Destroy() SectionFrame:Destroy() end
-            function Section:Set(New) if New then SectionLabel.Text = GetStr(New) end end
+            function Section:Destroy()
+                SectionFrame:Destroy()
+            end
+            function Section:Set(New)
+                if New then
+                    SectionLabel.Text = GetStr(New)
+                end
+            end
             return Section
         end
         
         function Tab:AddParagraph(Configs)
             local PName = Configs[1] or Configs.Title or "Paragraph"
             local PDesc = Configs[2] or Configs.Text or ""
+            
             local Frame, LabelFunc = ButtonFrame(Container, PName, PDesc, UDim2.new(1, -20))
+            
             local Paragraph = {}
             function Paragraph:Visible(...) Funcs:ToggleVisible(Frame, ...) end
             function Paragraph:Destroy() Frame:Destroy() end
-            function Paragraph:SetTitle(Val) LabelFunc:SetTitle(GetStr(Val)) end
-            function Paragraph:SetDesc(Val) LabelFunc:SetDesc(GetStr(Val)) end
+            function Paragraph:SetTitle(Val)
+                LabelFunc:SetTitle(GetStr(Val))
+            end
+            function Paragraph:SetDesc(Val)
+                LabelFunc:SetDesc(GetStr(Val))
+            end
             function Paragraph:Set(Val1, Val2)
                 if Val1 and Val2 then
                     LabelFunc:SetTitle(GetStr(Val1))
@@ -1128,6 +1200,7 @@ function antoralib:MakeWindow(Configs)
             local Callback = Funcs:GetCallback(Configs, 2)
             
             local FButton, LabelFunc = ButtonFrame(Container, BName, BDescription, UDim2.new(1, -20))
+            
             local ButtonIcon = Create("ImageLabel", FButton, {
                 Size = UDim2.new(0, 14, 0, 14),
                 Position = UDim2.new(1, -10, 0.5),
@@ -1135,9 +1208,11 @@ function antoralib:MakeWindow(Configs)
                 BackgroundTransparency = 1,
                 Image = "rbxassetid://10709791437"
             })
+            
             FButton.Activated:Connect(function()
                 Funcs:FireCallback(Callback)
             end)
+            
             local Button = {}
             function Button:Visible(...) Funcs:ToggleVisible(FButton, ...) end
             function Button:Destroy() FButton:Destroy() end
@@ -1200,6 +1275,7 @@ function antoralib:MakeWindow(Configs)
             local WaitClick
             local function SetToggle(Val)
                 if WaitClick then return end
+                
                 WaitClick, Default = true, Val
                 SetFlag(Flag, Default)
                 Funcs:FireCallback(Callback, Default)
@@ -1554,6 +1630,7 @@ function antoralib:MakeWindow(Configs)
             function Dropdown:Visible(...) Funcs:ToggleVisible(Button, ...) end
             function Dropdown:Destroy() Button:Destroy() end
             function Dropdown:Callback(...) Funcs:InsertCallback(Callback, ...)(Selected) end
+            
             function Dropdown:Add(...)
                 local NewOptions = {...}
                 if type(NewOptions[1]) == "table" then
@@ -1564,7 +1641,7 @@ function antoralib:MakeWindow(Configs)
             end
             function Dropdown:Remove(Option)
                 for index, Value in pairs(GetOptions()) do
-                    if type(Option) == "number" and index == Option or Value.Name == Option then
+                    if type(Option) == "number" and index == Option or Value.Name == "Option" then
                         RemoveOption(index, Value.Value)
                     end
                 end
@@ -1701,9 +1778,11 @@ function antoralib:MakeWindow(Configs)
                 
                 SetFlag(Flag, NewValue)
                 CreateTween({ SliderIcon, "Position", UDim2.fromScale(math.clamp(SliderPos, 0, 1), 0.5), 0.3, true })
-            end;SetSlider(Default)
+            end
+            SetSlider(Default)
             
-            SliderIcon:GetPropertyChangedSignal("Position"):Connect(UpdateValues)UpdateValues()
+            SliderIcon:GetPropertyChangedSignal("Position"):Connect(UpdateValues)
+            UpdateValues()
             
             local Slider = {}
             function Slider:Set(NewVal1, NewVal2)
@@ -1776,7 +1855,8 @@ function antoralib:MakeWindow(Configs)
                 end
             end
             
-            TextBoxInput.FocusLost:Connect(Input)Input()
+            TextBoxInput.FocusLost:Connect(Input)
+            Input()
             
             TextBoxInput.FocusLost:Connect(function()
                 CreateTween({Pencil, "ImageColor3", Color3.fromRGB(255, 255, 255), 0.2})
@@ -1874,12 +1954,14 @@ function antoralib:MakeWindow(Configs)
                     Text = "Copied to Clipboard",
                     BackgroundColor3 = Color3.fromRGB(100, 100, 100),
                     TextColor3 = Color3.fromRGB(150, 150, 150)
-                })task.wait(5)
+                })
+                task.wait(5)
                 SetProps(JoinButton, {
                     Text = "Join",
                     BackgroundColor3 = Color3.fromRGB(50, 150, 50),
                     TextColor3 = Color3.fromRGB(220, 220, 220)
-                })ClickDelay = false
+                })
+                ClickDelay = false
             end)
             
             local DiscordInvite = {}
@@ -1891,8 +1973,6 @@ function antoralib:MakeWindow(Configs)
         return Tab
     end
     
-    CloseButton.Activated:Connect(Window.CloseBtn)
-    MinimizeButton.Activated:Connect(Window.MinimizeBtn)
     return Window
 end
 
