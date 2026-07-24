@@ -3920,7 +3920,7 @@ function Library:Window(p)
 		CloseIcon.Size = UDim2.new(0, 50, 0, 50) 
 		CloseIcon.Position = UDim2.new(0.5, 0, 0.5, 0) 
 		CloseIcon.AnchorPoint = Vector2.new(0.5, 0.5) 
-		CloseIcon.Image = "https://www.roblox.com/Thumbs/Asset.ashx?width=420&height=420&assetId=98422026425819" 
+		CloseIcon.Image = "https://www.roblox.com/Thumbs/Asset.ashx?width=420&height=420&assetId=114929713504311" 
 		addToTheme('Text & Icon', CloseIcon) 		
 		local Click = click(CloseUIShadow) 		
 		Click.MouseButton1Click:Connect(function() 			
